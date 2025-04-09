@@ -1,34 +1,20 @@
-start: program
-program: instruction*
-program_character: /[ \t\n]/
+program: statement*
 number_literal: /[ \t][ \t]+\n/
 label_literal: /[ \t]+\n/
-instruction: opcode
-?instruction_param: number_literal | label_literal
-?opcode:
-    | stack_manipulation_instruction
-    | arithmetic_instruction
-    | heap_access_instruction
-    | flow_control_instruction
-    | io_instruction
-
-stack_manipulation_instruction:
+statement: 
     | "  "      number_literal -> push
     | " \n "     -> dup
     | " \t "    number_literal -> copy
     | " \n\t"    -> swap
     | " \n\n"    -> pop
     | " \t\n"   number_literal -> slide
-arithmetic_instruction:
     | "\t   "    -> add
     | "\t  \t"   -> sub
     | "\t  \n"   -> mul
     | "\t \t "   -> div
     | "\t \t\t"  -> mod
-heap_access_instruction:
     | "\t\t "    -> store
     | "\t\t\t"   -> load
-flow_control_instruction:
     | "\n  "    label_literal -> label
     | "\n \t"   label_literal -> call
     | "\n \n"   label_literal -> jmp
@@ -36,7 +22,6 @@ flow_control_instruction:
     | "\n\t\t"  label_literal -> jlz // as in "jump if less than zero"
     | "\n\t\n"   -> ret
     | "\n\n\n"   -> end
-io_instruction:
     | "\t\n  "   -> outchr
     | "\t\n \t"  -> outnum
     | "\t\n\t\n" -> inchr

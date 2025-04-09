@@ -14,5 +14,6 @@ PROGRAM = minify(open('hello.ws').read())
 
 if __name__ == '__main__':
     output = whitespace.parser.parse(PROGRAM)
-    print(output.pretty())
-    print(whitespace.NumberTransformer().transform(output).pretty())
+    # print(output.pretty())
+    print(whitespace.LiteralTransformer().transform(output))
+    whitespace.interpret(PROGRAM)
