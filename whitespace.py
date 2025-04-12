@@ -4,6 +4,8 @@ from typing import Callable, Any
 
 import lark
 
+import parse_python_tree
+
 GRAMMAR_PATH = "grammar.lark"
 
 def pop_two(stack: list) -> tuple:
@@ -62,8 +64,16 @@ class LiteralTransformer(lark.Transformer):
     def label_literal(self, items):
         return items[0].replace('\t', '1').replace(' ', '0')
     
+
+class AllTransformer(lark.Transformer):
+    def number_literal(self, items):
+        return whitespace_number(items[0].value)
+    
+    def label_literal(self, items):
+        return items[0].replace('\t', '1').replace(' ', '0')
+    
     def program(self, items):
-        print(items)
+        # print(items)
         return [
             (item.data, tuple(item.children)) for item in items
         ]
@@ -81,3 +91,54 @@ def interpret(prog: str):
             INSTRUCTIONS[op](callstack=[], stack=[], arg=arg)
         else:
             assert False
+
+def parse(prog: str):
+    return AllTransformer().transform(parser.parse(prog))
+
+op_name_to_num = {
+    x: i for (i, x) in enumerate(
+        (
+            "push",
+            "dup",
+            "copy",
+            "swap",
+            "pop",
+            "slide",
+            "add",
+            "sub",
+            "mul",
+            "div",
+            "mod",
+            "store",
+            "load",
+            "label",
+            "jump",
+            "jz",
+            "jlz",
+            "call",
+            "ret",
+            "end",
+            "outchr",
+            "outnum",
+            "inchr",
+            "innum"
+        )
+    )
+}
+
+def interpret_c_wrapper(prog: tuple[str, tuple[int] | tuple[()]]):
+    """Wrapper for C function"""
+    prog_list = []
+    for i in range(len(prog)):
+        assert 1 <= len(prog[i]) <= 2
+        op = prog[i][0]
+        if op not in op_name_to_num:
+            raise ValueError(f"Expected one of {op_name_to_num.keys()}, got {op} instead "
+                             "(at index {i} of prog)")
+        if len(prog[i]) == 1:
+            prog_list.append( (op_name_to_num[op],) )
+        else:
+            # length 2
+            prog_list.append( (op_name_to_num[op], *prog[i][1]) ) # arg
+    # call c function now
+    parse_python_tree.parse_python_tree(tuple(prog_list))

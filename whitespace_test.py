@@ -13,7 +13,8 @@ def minify(program: str):
 PROGRAM = minify(open('hello.ws').read())
 
 if __name__ == '__main__':
-    output = whitespace.parser.parse(PROGRAM)
+    output = whitespace.parse(PROGRAM)
+
+    open('dump.asm', 'w').write(whitespace.LiteralTransformer().transform(whitespace.parser.parse(PROGRAM)).pretty())
     # print(output.pretty())
-    print(whitespace.LiteralTransformer().transform(output))
-    whitespace.interpret(PROGRAM)
+    whitespace.interpret_c_wrapper(output)
