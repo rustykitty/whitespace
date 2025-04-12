@@ -6,7 +6,7 @@ import lark
 
 import parse_python_tree
 
-GRAMMAR_PATH = "grammar.lark"
+GRAMMAR_PATH = "whitespace.lark"
 
 with open(GRAMMAR_PATH, "r") as f:
     parser = lark.Lark(f.read(), start="program")

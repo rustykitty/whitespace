@@ -1,0 +1,12 @@
+push 72 ; H
+outchr
+push 101 ; e
+outchr
+push 108 ; l
+outchr
+outchr
+push 111 ; o
+outchr
+push '!' ; character literal
+outchr
+end ; end the program

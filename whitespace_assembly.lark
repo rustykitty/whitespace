@@ -1,0 +1,49 @@
+%import common.SIGNED_INT
+%import common.WS
+%import common.WS_INLINE
+%import common.CNAME
+%import common.CR
+%import common.LF
+%import common.CRLF
+%ignore WS_INLINE
+
+program: statement? (("\n" | "\r\n") statement)*
+
+CHAR_LITERAL: "'" /[ -~]/ "'" // 0x20 to 0x7e
+NUMBER_LITERAL: SIGNED_INT
+LABEL_LITERAL: CNAME
+
+COMMENT: /;[^\n]*/ // adapted from common.SH_COMMENT
+
+instruction: "push" -> push
+           | "dup" -> dup
+           | "copy" -> copy
+           | "swap" -> swap
+           | "pop" -> pop
+           | "slide" -> slide
+           | "add" -> add
+           | "sub" -> sub
+           | "mul" -> mul
+           | "div" -> div
+           | "mod" -> mod
+           | "store" -> store
+           | "load" -> load
+           | "label" -> label
+           | "jmp" -> jmp
+           | "jz" -> jz
+           | "jlz" -> jlz
+           | "call" -> call
+           | "ret" -> ret
+           | "end" -> end
+           | "outchr" -> outchr
+           | "outnum" -> outnum
+           | "inchr" -> inchr
+           | "innum" -> innum
+
+statement: instruction literal?
+
+?literal: NUMBER_LITERAL -> number_literal
+        | LABEL_LITERAL -> label_literal
+        | CHAR_LITERAL -> char_literal
+
+%ignore COMMENT
