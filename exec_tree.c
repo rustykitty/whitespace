@@ -28,14 +28,14 @@ struct wstree_err {
     const char* message;
 };
 
-struct heap_entry {
+static struct heap_entry {
     size_t address;
     ws_int value;
 };
 
-struct heap_entry* heap = NULL;
-size_t heap_size = 0;
-size_t heap_capacity = 0;
+static struct heap_entry* heap = NULL;
+static size_t heap_size = 0;
+static size_t heap_capacity = 0;
 
 static char err_buf[256];
 
@@ -53,9 +53,7 @@ static char err_buf[256];
     GET_ERROR_STRUCT(i, err_buf); \
 })
 
-#define ERROR(_i) 
-
-struct heap_entry* _get_heap_node(size_t addr) {
+static struct heap_entry* _get_heap_node(size_t addr) {
     for (size_t i = 0; i < heap_size; ++i) {
         if (heap[i].address == addr) {
             return &heap[i];
@@ -64,9 +62,9 @@ struct heap_entry* _get_heap_node(size_t addr) {
     return NULL;
 }
 
-struct wstree_err* e = NULL;
+static struct wstree_err* e = NULL;
 
-void heap_store(ws_int addr, ws_int val) {
+static void heap_store(ws_int addr, ws_int val) {
     if (!heap) {
         heap = malloc(sizeof(struct heap_entry));
         heap_size = heap_capacity = 1;
@@ -86,7 +84,7 @@ void heap_store(ws_int addr, ws_int val) {
     }
 }
 
-struct heap_entry* heap_load(ws_int addr) {
+static struct heap_entry* heap_load(ws_int addr) {
     return _get_heap_node(addr);
 }
 
@@ -425,16 +423,5 @@ struct wstree_err* wsexecute(struct WS_statement* arr, size_t size) {
     return e;
 }
 
-int main() {
-    struct WS_statement prog[] = {
-        {WS_PUSH, .num = 72},
-        {WS_OUTCHR},
-        {WS_END}
-    };
-    struct wstree_err* err = wsexecute(prog, sizeof(prog) / sizeof(struct WS_statement));
-    if (err) {
-        printf("Error @ %zu: %s\n", err->index, err->message);
-        free(err);
-    }
-    return 0;
-}
+#undef GET_ERROR_STRUCT
+#undef GET_FORMATTED_ERROR_STRUCT
