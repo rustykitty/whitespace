@@ -32,7 +32,7 @@ parse_python_tree(PyObject* self, PyObject* args)
             }
         }
     struct WS_statement* arr = malloc(size * sizeof(struct WS_statement));
-    for (Py_ssize_t i = 0; i < size; i++) {
+    for (size_t i = 0; i < (size_t)size; i++) {
         // item: (op, arg?)
         PyObject* item = PyTuple_GetItem(prog, i);
         {

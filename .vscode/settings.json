@@ -2,6 +2,7 @@
     "files.associations": {
         "types.h": "c",
         "ws_operation.h": "c",
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "string.h": "c"
     }
 }

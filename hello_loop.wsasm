@@ -1,8 +1,0 @@
-; Inspired by BASIC "20 GOTO 10" programs
-label beginning
-push 72
-outchr
-push 'I'
-outchr
-jmp beginning ; loop
-end ; will never be run
