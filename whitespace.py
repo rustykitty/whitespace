@@ -1,10 +1,15 @@
 import sys
 import re
 from typing import Callable, Any
+import os
 
 import lark
 
+from utilty import write_error
+
 import parse_python_tree
+
+PROGRAM_NAME = os.path.basename(__file__)
 
 GRAMMAR_PATH = "whitespace.lark"
 
@@ -95,3 +100,21 @@ def interpret_c_wrapper(prog: tuple[str, tuple[int] | tuple[()]]):
             prog_list.append( (op_name_to_num[op], *prog[i][1]) ) # arg
     # call c function now
     parse_python_tree.parse_python_tree(tuple(prog_list))
+
+PROGRAM_CHARS = ' \t\n'
+
+def minify(program: str):
+    return ''.join(c for c in program if c in PROGRAM_CHARS)
+
+if __name__ == "__main__":
+    for file in sys.argv[1:]:
+        try:
+            f = open(file, "r")
+        except IOError as e:
+            write_error(PROGRAM_NAME, file, e.strerror)
+            continue
+        try:
+            output = parse(minify(f.read()))
+            interpret_c_wrapper(output)
+        except lark.exceptions.LarkError as e:
+            write_error(PROGRAM_NAME, file, e)
