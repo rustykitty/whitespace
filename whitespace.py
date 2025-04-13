@@ -98,8 +98,9 @@ def interpret_c_wrapper(prog: tuple[str, tuple[int] | tuple[()]]):
         else:
             # length 2
             prog_list.append( (op_name_to_num[op], *prog[i][1]) ) # arg
+    prog_list = tuple(prog_list)
     # call c function now
-    parse_python_tree.parse_python_tree(tuple(prog_list))
+    parse_python_tree.parse_python_tree(prog_list)
 
 PROGRAM_CHARS = ' \t\n'
 

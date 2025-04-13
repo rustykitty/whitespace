@@ -82,11 +82,13 @@ parse_python_tree(PyObject* self, PyObject* args)
         }
     }
     // We're good to go!
+    DEBUG("Calling wsexecute now");
     struct wstree_err* err = wsexecute(arr, size);
     if (err) {
         PyErr_Format(PyExc_RuntimeError, "ERROR at position %zu: %s", err->index, err->message);
         goto error_occurred;
     }
+    DEBUG("return from wsexecute");
     // cleanup
     free(arr);
     Py_RETURN_NONE;
