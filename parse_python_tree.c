@@ -11,12 +11,11 @@
 
 #include "debug.h"
 
-// convert from PyObject to C struct
 static PyObject* 
-parse_python_tree(PyObject* self, PyObject* args) 
+parse_python_tree(PyObject* self, PyObject* arg) 
 {
     PyObject* prog;
-    if (!PyArg_ParseTuple(args, "O!", &PyTuple_Type, &prog)) {
+    if (!PyArg_Parse(args, "O!:parse_python_tree", &PyTuple_Type, &prog)) {
         return NULL;
     }
     Py_ssize_t size = PyTuple_Size(prog);
@@ -98,8 +97,8 @@ parse_python_tree(PyObject* self, PyObject* args)
 }
 
 static PyMethodDef wsexecute_methods[] = {
-    {"parse_python_tree", parse_python_tree, METH_VARARGS, "Execute the parsed whitespace tree"},
-    {NULL, NULL, 0, NULL} /* Sentinel */
+    {"parse_python_tree", parse_python_tree, METH_O, "Execute the parsed whitespace tree"},
+    {NULL, NULL, 0, NULL} /* sentinel */
 };
 
 static struct PyModuleDef wsexecute_module = {
