@@ -15,7 +15,7 @@ static PyObject*
 parse_python_tree(PyObject* self, PyObject* arg) 
 {
     PyObject* prog;
-    if (!PyArg_Parse(args, "O!:parse_python_tree", &PyTuple_Type, &prog)) {
+    if (!PyArg_Parse(arg, "O!:parse_python_tree", &PyTuple_Type, &prog)) {
         return NULL;
     }
     Py_ssize_t size = PyTuple_Size(prog);
