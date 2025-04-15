@@ -1,14 +1,15 @@
 {
-	"features": {
-		"ghcr.io/devcontainers/features/python:1": {},
-	    "ghcr.io/devcontainers-extra/features/poetry:2": {}
-	},
+    "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+    "features": {
+        "ghcr.io/devcontainers/features/python:1": {},
+        "ghcr.io/devcontainers-extra/features/poetry:2": {}
+    },
     "postCreateCommand": "poetry install --no-root",
     "customizations": {
         "vscode": {
-          "settings": {
-            "workbench.colorTheme": "Default Dark Modern"
-          }
+            "settings": {
+                "workbench.colorTheme": "Default Dark Modern"
+            }
         }
     }
 }
