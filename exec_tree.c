@@ -259,7 +259,7 @@ struct wstree_err* wsexecute(struct WS_statement* arr, size_t size) {
                 if (node) {
                     *(++stack_top) = node->value;
                 } else {
-                    e = GET_FORMATTED_ERROR_STRUCT(p - arr, "Address %lld not found", addr);
+                    e = GET_FORMATTED_ERROR_STRUCT(p - arr, "Address %jd not found", addr);
                     goto end_program;
                 }
                 break;
@@ -329,7 +329,7 @@ struct wstree_err* wsexecute(struct WS_statement* arr, size_t size) {
                     e = GET_ERROR_STRUCT(p - arr, "stack underflow");
                     goto end_program;
                 }
-                printf("%lld\n", *stack_top);
+                printf("%jd\n", *stack_top);
                 break;
             }
             case WS_INCHR: {
@@ -352,7 +352,7 @@ struct wstree_err* wsexecute(struct WS_statement* arr, size_t size) {
                     goto end_program;
                 }
                 ws_int n;
-                if (scanf("%lld\n", &n)) {
+                if (scanf("%jd\n", &n)) {
                     heap_store(*stack_top, n);
                 } else {
                     e = GET_ERROR_STRUCT(p - arr, "Invalid number / IO error. Check errno and/or EOF/error flags of stdin");

@@ -1,6 +1,6 @@
 import whitespace
 
-PROGRAM = whitespace.minify(open('hello.ws').read())
+PROGRAM = whitespace.minify(open('test.wsasm.ws').read())
 
 if __name__ == '__main__':
     output = whitespace.parse(PROGRAM)

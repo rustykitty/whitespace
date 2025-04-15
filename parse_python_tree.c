@@ -34,14 +34,6 @@ parse_python_tree(PyObject* self, PyObject* arg)
     for (size_t i = 0; i < (size_t)size; i++) {
         // item: (op, arg?)
         PyObject* item = PyTuple_GetItem(prog, i);
-        {
-            PyObject* repr = PyObject_Repr(item);
-            if (repr == NULL) {
-                goto error_occurred;
-            } else {
-                Py_DECREF(repr);
-            }
-        }
         if (item == NULL) { // Exception in GetItem
             goto error_occurred;
         } else if (!PyTuple_Check(item)) {

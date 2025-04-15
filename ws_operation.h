@@ -1,7 +1,7 @@
 #ifndef WS_OPERATION_H
 #define WS_OPERATION_H
 
-typedef long long int ws_int;
+typedef intmax_t ws_int;
 
 enum WS_operation {
     WS_PUSH = 0,
