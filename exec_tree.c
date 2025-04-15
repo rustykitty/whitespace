@@ -94,11 +94,13 @@ static struct heap_entry* heap_load(ws_int addr) {
  * @note err->message is statically allocated. DO NOT FREE IT.
  */
 struct wstree_err* wsexecute(struct WS_statement* arr, size_t size) {
-    struct WS_statement** callstack = malloc(CALLSTACK_SIZE * sizeof(struct WS_statement*)),
-        **callstack_top = callstack;
+    static struct WS_statement **callstack[CALLSTACK_SIZE];
+    struct WS_statement **callstack_top = callstack;
+    *callstack_top = arr; // first statement onto top of stack
+    
     ws_int* stack = malloc(STACK_SIZE * sizeof(ws_int)),
         *stack_top = stack;
-    *callstack_top = arr;
+    
     struct WS_statement** labels = NULL;
     size_t label_count = 0;
     for (size_t i = 0; i < size; ++i) {
@@ -108,10 +110,6 @@ struct wstree_err* wsexecute(struct WS_statement* arr, size_t size) {
     }
     if (label_count) {
         labels = malloc(sizeof(struct WS_statement*) * (label_count + 1));
-        if (!labels) {
-            perror("malloc");
-            assert(0);
-        }
         labels[label_count] = NULL; // sentinel, should we need it
         struct WS_statement** label_p = labels;
         for (size_t i = 0; i < size; ++i) {
@@ -123,7 +121,7 @@ struct wstree_err* wsexecute(struct WS_statement* arr, size_t size) {
 
     while ((*callstack_top) < arr + size && (*callstack_top)->op != WS_END) {
         struct WS_statement i = **callstack_top;
-        // for convienience only
+        // TODO: check if this is still used
         struct WS_statement* p = *callstack_top;
         switch (i.op) {
             case WS_PUSH: {
@@ -389,7 +387,6 @@ struct wstree_err* wsexecute(struct WS_statement* arr, size_t size) {
         fprintf(stderr, "Warning: reached end of program but didn't find END instruction\n");
     }
     end_program:
-    free(callstack);
     free(stack);
     if (labels) free(labels);
     return e;
