@@ -40,7 +40,7 @@ static size_t heap_capacity = 0;
 static char err_buf[127];
 
 #define GET_ERROR_STRUCT(_i, _m) ({          \
-    strcpy(err_buf, _m);\
+    strcpy(err_buf, _m);                     \
     struct wstree_err* _err = malloc(sizeof(struct wstree_err)); \
     *_err = (struct wstree_err){             \
         _i, err_buf                          \
@@ -49,8 +49,9 @@ static char err_buf[127];
 })
 
 #define GET_FORMATTED_ERROR_STRUCT(i, ...) ({ \
-    snprintf(err_buf, sizeof(err_buf), __VA_ARGS__); \
-    GET_ERROR_STRUCT(i, err_buf); \
+    char _tmp[sizeof(err_buf)];
+    snprintf(_tmp, sizeof(err_buf), __VA_ARGS__); \
+    GET_ERROR_STRUCT(i, _tmp); \
 })
 
 static struct heap_entry* _get_heap_node(size_t addr) {
@@ -61,8 +62,6 @@ static struct heap_entry* _get_heap_node(size_t addr) {
     }
     return NULL;
 }
-
-static struct wstree_err* e = NULL;
 
 static void heap_store(ws_int addr, ws_int val) {
     if (!heap) {
@@ -94,7 +93,8 @@ static struct heap_entry* heap_load(ws_int addr) {
  * @note err->message is statically allocated. DO NOT FREE IT.
  */
 struct wstree_err* wsexecute(struct WS_statement* arr, size_t size) {
-    static struct WS_statement **callstack[CALLSTACK_SIZE];
+    static struct wstree_err* e = NULL;
+    static struct WS_statement *callstack[CALLSTACK_SIZE];
     struct WS_statement **callstack_top = callstack;
     *callstack_top = arr; // first statement onto top of stack
     
