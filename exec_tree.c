@@ -49,9 +49,9 @@ static char err_buf[127];
 })
 
 #define GET_FORMATTED_ERROR_STRUCT(i, ...) ({ \
-    char _tmp[sizeof(err_buf)];
+    char _tmp[sizeof(err_buf)];               \
     snprintf(_tmp, sizeof(err_buf), __VA_ARGS__); \
-    GET_ERROR_STRUCT(i, _tmp); \
+    GET_ERROR_STRUCT(i, _tmp);                \
 })
 
 static struct heap_entry* _get_heap_node(size_t addr) {
