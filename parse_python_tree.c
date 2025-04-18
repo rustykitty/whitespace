@@ -6,9 +6,7 @@
 #include <Python.h>
 
 #include "ws_operation.h"
-
 #include "exec_tree.c"
-
 #include "debug.h"
 
 static PyObject* 
@@ -22,14 +20,6 @@ parse_python_tree(PyObject* self, PyObject* arg)
     if (size == -1) {
         return NULL; // Exception in Size
     }
-    {
-            PyObject* repr = PyObject_Repr(prog);
-            if (repr == NULL) {
-                return NULL;
-            } else {
-                Py_DECREF(repr);
-            }
-        }
     struct WS_statement* arr = malloc(size * sizeof(struct WS_statement));
     for (size_t i = 0; i < (size_t)size; i++) {
         // item: (op, arg?)
@@ -45,6 +35,7 @@ parse_python_tree(PyObject* self, PyObject* arg)
                             i, PyTuple_Size(item));
             goto error_occurred;
         }
+
         enum WS_operation op;
         PyObject* arg_obj = NULL;
         if (!PyArg_ParseTuple(item, "i|O", &op, &arg_obj)) {
@@ -52,16 +43,20 @@ parse_python_tree(PyObject* self, PyObject* arg)
                          i, Py_TYPE(item)->tp_name, arg_obj ? Py_TYPE(arg_obj)->tp_name : "nothing");
             goto error_occurred;
         }
+
         if (arg_obj == NULL || arg_obj == Py_None) {
+            // opcode, no param
             arr[i] = (struct WS_statement){
                 .op = (enum WS_operation) op,
             };
         } else if (PyLong_Check(arg_obj)) {
+            // opcode, numeric param
             arr[i] = (struct WS_statement){
                 .op = (enum WS_operation) op,
                 .num = PyLong_AsLongLong(arg_obj),
             };
         } else if (PyUnicode_Check(arg_obj)) {
+            // opcode, label param
             arr[i] = (struct WS_statement){
                 .op = (enum WS_operation) op,
                 .label = PyUnicode_AsUTF8(arg_obj),
@@ -72,13 +67,13 @@ parse_python_tree(PyObject* self, PyObject* arg)
             goto error_occurred;
         }
     }
-    // We're good to go!
+
     struct wstree_err* err = wsexecute(arr, size);
     if (err) {
         PyErr_Format(PyExc_RuntimeError, "ERROR at position %zu: %s", err->index, err->message);
         goto error_occurred;
     }
-    // cleanup
+
     free(arr);
     Py_RETURN_NONE;
     error_occurred:

@@ -2,7 +2,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <sys/types.h>
-#include <assert.h>
 
 #include "ws_operation.h"
 #include "debug.h"
@@ -132,7 +131,6 @@ struct wstree_err* wsexecute(struct WS_statement* arr, size_t size) {
 
     while ((*callstack_top) < arr + size && (*callstack_top)->op != WS_END) {
         struct WS_statement i = **callstack_top;
-        // TODO: check if this is still used
         struct WS_statement* p = *callstack_top;
         switch (i.op) {
             case WS_PUSH: {
