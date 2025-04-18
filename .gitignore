@@ -269,3 +269,5 @@ Mkfile.old
 dkms.conf
 
 ### end C ###
+
+whitespace_interpreter_test.c # generated from `make test`

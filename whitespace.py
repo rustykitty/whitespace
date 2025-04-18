@@ -53,9 +53,7 @@ class AllTransformer(lark.Transformer):
 def parse(prog: str):
     return AllTransformer().transform(parser.parse(prog))
 
-op_name_to_num = {
-    x: i for (i, x) in enumerate(
-        (
+ops = (
             "push",
             "dup",
             "copy",
@@ -81,8 +79,6 @@ op_name_to_num = {
             "inchr",
             "innum"
         )
-    )
-}
 
 def interpret_c_wrapper(prog: tuple[str, tuple[int] | tuple[()]]):
     """Wrapper for C function"""
@@ -90,14 +86,14 @@ def interpret_c_wrapper(prog: tuple[str, tuple[int] | tuple[()]]):
     for i in range(len(prog)):
         assert 1 <= len(prog[i]) <= 2
         op = prog[i][0]
-        if op not in op_name_to_num:
-            raise ValueError(f"Expected one of {op_name_to_num.keys()}, got {op} instead "
+        if op not in ops:
+            raise ValueError(f"Expected one of {ops}, got {op} instead "
                              "(at index {i} of prog)")
         if len(prog[i]) == 1:
-            prog_list.append( (op_name_to_num[op],) )
+            prog_list.append( (ops.index(op),) )
         else:
             # length 2
-            prog_list.append( (op_name_to_num[op], *prog[i][1]) ) # arg
+            prog_list.append( (ops.index(op), *prog[i][1]) ) # arg
     prog_list = tuple(prog_list)
     # call c function now
     parse_python_tree.parse_python_tree(prog_list)

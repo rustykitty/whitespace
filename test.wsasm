@@ -2004,4 +2004,5 @@ push 0
 pop
 push 0
 pop
+label hi
 end

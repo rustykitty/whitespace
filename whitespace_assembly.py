@@ -74,6 +74,14 @@ INSTRUCTIONS = {
     "innum": "\t\n\t\t"
 }
 
+TRANSFORMER = WhitespaceAssemblyTransformer()
+
+def parse(prog):
+    return parser.parse(prog)
+
+def transform(tree):
+    return TRANSFORMER.transform(tree)
+
 if __name__ == "__main__":
     for file in sys.argv[1:]:
         try:
@@ -83,8 +91,8 @@ if __name__ == "__main__":
             continue
         try:
             prog = f.read()
-            output = parser.parse(prog)
-            transformed_output = WhitespaceAssemblyTransformer().transform(output)
+            output = parse(prog)
+            transformed_output = TRANSFORMER.transform(output)
             ws_code = to_whitespace(transformed_output)
             with open(file + ".ws", "w") as out:
                 out.write(ws_code)

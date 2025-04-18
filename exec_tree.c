@@ -125,9 +125,9 @@ struct wstree_err* wsexecute(struct WS_statement* arr, size_t size) {
         struct WS_statement* p = *callstack_top;
         switch (i.op) {
             case WS_PUSH: {
-                if (stack + STACK_SIZE > stack_top) {
+                if (stack + STACK_SIZE > stack_top + 1) {
                     ++stack_top;
-                    *(++stack_top) = i.num;
+                    *stack_top = i.num;
                 } else {
                     e = GET_ERROR_STRUCT(p - arr, "Stack overflow");
                     goto end_program;
@@ -135,7 +135,7 @@ struct wstree_err* wsexecute(struct WS_statement* arr, size_t size) {
                 break;
             }
             case WS_DUP: {
-                if (stack + STACK_SIZE > stack_top) {
+                if (stack + STACK_SIZE > stack_top + 1) {
                     *(stack_top + 1) = *stack_top;
                     ++stack_top;
                 } else {

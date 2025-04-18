@@ -1,6 +1,8 @@
 #ifndef WS_OPERATION_H
 #define WS_OPERATION_H
 
+#include <stdint.h>
+
 typedef intmax_t ws_int;
 
 enum WS_operation {
