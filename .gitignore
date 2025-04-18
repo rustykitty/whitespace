@@ -272,3 +272,7 @@ dkms.conf
 
 # generated from `make test`
 whitespace_interpreter_test.c 
+
+# generated whitespace files
+**/*.ws.wsasm
+**/*.wsasm.ws

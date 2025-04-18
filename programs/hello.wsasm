@@ -1,12 +1,27 @@
+; A simple hello world program
 push 72 ; H
 outchr
 push 101 ; e
 outchr
 push 108 ; l
 outchr
-outchr
+outchr ; outchr another time for second 'L'
 push 111 ; o
 outchr
-push '!' ; character literal
+push ','
+outchr
+push ' '
+outchr
+push 'W'
+outchr
+push 'o'
+outchr
+push 'r'
+outchr
+push 'l'
+outchr
+push 'd'
+outchr
+push '!' ; character literals work too
 outchr
 end ; end the program
