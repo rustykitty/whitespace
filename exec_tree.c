@@ -63,6 +63,11 @@ static struct heap_entry* _get_heap_node(size_t addr) {
     return NULL;
 }
 
+/**
+ * Store a value into the heap.
+ * @param addr The address in the heap to store the value at
+ * @param val The value to store in the address
+ */
 static void heap_store(ws_int addr, ws_int val) {
     if (!heap) {
         heap = malloc(sizeof(struct heap_entry));
@@ -83,11 +88,17 @@ static void heap_store(ws_int addr, ws_int val) {
     }
 }
 
+/**
+ * Loads a value from the heap.
+ * @param addr The address to load from.
+ * @returns A pointer to a valid heap entry if the address exists in the heap, NULL otherwise.
+ */
 static struct heap_entry* heap_load(ws_int addr) {
     return _get_heap_node(addr);
 }
 
 /**
+ * Called from parse_python_tree to execute the parsed instructions after converting from Python
  * @returns NULL on success, valid pointer on error (allocated using malloc)
  * @note For a struct wstree_err* err, free(err) when done.
  * @note err->message is statically allocated. DO NOT FREE IT.

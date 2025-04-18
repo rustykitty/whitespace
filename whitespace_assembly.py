@@ -34,6 +34,9 @@ class WhitespaceAssemblyTransformer(lark.Transformer):
         items[0] = items[0].data
         return tuple(items)
 
+"""
+Compile a program to whitespace
+"""
 def to_whitespace(prog: tuple[tuple[str, int | str, str | str]]):
     res = ""
     for i in prog:
