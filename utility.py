@@ -3,8 +3,8 @@ import os
 
 PROGRAM_NAME = os.path.basename(sys.argv[0])
 
-def write_error(program_name, filename, message):
-    return sys.stderr.write(f"{program_name}: {filename}: {message}\n")
+def write_error(filename, message):
+    return sys.stderr.write(f"{PROGRAM_NAME}: {filename}: {message}\n")
 
 def open_files_in_argv():
     for filename in sys.argv[1:]:
@@ -14,6 +14,6 @@ def open_files_in_argv():
             try:
                 fp = open(filename)
             except OSError as e:
-                write_error(PROGRAM_NAME, filename, e.strerror)
+                write_error(filename, e.strerror)
                 continue
             yield fp

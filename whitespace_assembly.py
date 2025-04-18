@@ -3,7 +3,7 @@ import os
 
 import lark
 
-from utility import write_error
+import utility
 
 PROGRAM_NAME = os.path.basename(__file__)
 
@@ -86,18 +86,13 @@ def transform(tree):
     return TRANSFORMER.transform(tree)
 
 if __name__ == "__main__":
-    for file in sys.argv[1:]:
-        try:
-            f = open(file, "r")
-        except IOError as e:
-            write_error(PROGRAM_NAME, file, e.strerror)
-            continue
+    for f in utility.open_files_in_argv():
         try:
             prog = f.read()
             output = parse(prog)
             transformed_output = TRANSFORMER.transform(output)
             ws_code = to_whitespace(transformed_output)
-            with open(file + ".ws", "w") as out:
+            with open(f.name + ".ws", "w") as out:
                 out.write(ws_code)
         except lark.exceptions.LarkError as e:
-            write_error(PROGRAM_NAME, file, e)
+            utility.write_error(f.name, e)

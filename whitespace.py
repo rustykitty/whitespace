@@ -97,10 +97,10 @@ if __name__ == "__main__":
         try:
             f = open(file)
         except IOError as e:
-            write_error(PROGRAM_NAME, file, e.strerror)
+            write_error(file, e.strerror)
             continue
         try:
             output = parse(f.read())
             interpret_c_wrapper(output)
         except lark.exceptions.LarkError as e:
-            write_error(PROGRAM_NAME, file, e)
+            write_error(file, e)

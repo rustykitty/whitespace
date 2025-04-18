@@ -5,12 +5,17 @@ import utility
 
 import re
 
+import lark
+
 IDENTIFIER = re.compile(r"[_a-zA-Z][_a-zA-Z0-9]*")
 
 if __name__ == "__main__":
     for file in utility.open_files_in_argv():
         program = file.read()
-        output = ws.parse(program)
+        try:
+            output = ws.parse(program)
+        except lark.exceptions.LarkError as e:
+            utility.write_error(file.name, e)
         res = ''
         for stmt in output:
             res += stmt[0]
