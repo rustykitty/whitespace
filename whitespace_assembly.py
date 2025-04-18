@@ -3,7 +3,7 @@ import os
 
 import lark
 
-from utilty import write_error
+from utility import write_error
 
 PROGRAM_NAME = os.path.basename(__file__)
 
