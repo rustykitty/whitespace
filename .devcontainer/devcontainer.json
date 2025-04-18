@@ -9,6 +9,16 @@
     "postCreateCommand": "poetry install --no-root",
     "customizations": {
         "vscode": {
+            "extensions": [
+                "GitHub.copilot",
+                "ms-vscode.cpptools-extension-pack",
+                "ms-vscode.makefile-tools",
+                "ms-python.python",
+                "ms-python.debugpy",
+                "ms-python.vscode-pylance",
+                "ms-python.autopep8",
+                "DavidAnson.vscode-markdownlint"
+            ],
             "settings": {
                 "workbench.colorTheme": "Default Dark Modern"
             }
