@@ -106,7 +106,7 @@ def minify(program: str):
 if __name__ == "__main__":
     for file in sys.argv[1:]:
         try:
-            f = open(file, "r")
+            f = open(file)
         except IOError as e:
             write_error(PROGRAM_NAME, file, e.strerror)
             continue
