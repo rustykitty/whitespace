@@ -10,7 +10,6 @@ requires-python = ">=3.12"
 dependencies = [
     "lark (==1.2.2)",
     "setuptools (==78.1.0)",
-    "pylint (>=3.3.6,<4.0.0)"
 ]
 
 [build-system]
@@ -19,3 +18,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.setuptools]
 py-modules = []
+
+[tool.poetry.group.dev.dependencies]
+pylint = "^3.3.6"
+
