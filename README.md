@@ -10,6 +10,21 @@ Additionally, there may be bugs, especially around the Whitespace interpreter's 
 
 Whitespace or Whitespace Assembly programs included in this repository are either taken from Wikipedia, taken from the Esolangs Wiki, or written by myself.
 
+## Instructions
+
+Ensure that Poetry is installed. You can find instructions at <https://python-poetry.org/docs/>.
+
+`git clone` the repository. You will need to run `make` the to compile the C extension code prior to running it the first time, and recompile every time it is changed.
+
+A number of shell scripts are available to allow for running the various Python scripts with less typing.
+
+These include:
+
+- `ws` - Run the Whitespace interpreter (`whitespace.py`)
+- `wsasmc` - Run the Whitespace Assembly compiler (`whitespace_assembler.py`)
+- `wsasmexec` - Runs the Whitespace Assembly code directly.
+- `wsdasm` - Disassemble Whitespace code into Whitespace Assembly
+
 TODO:
 
 - Make labels more efficient
