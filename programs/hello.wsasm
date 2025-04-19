@@ -1,14 +1,15 @@
 ; A simple hello world program
+; This is a version written especially to test character literals
 push 72 ; H
 outchr
-push 101 ; e
+push '\x65' ; e
 outchr
-push 108 ; l
+push '\154' ; l
 outchr
 outchr ; outchr another time for second 'L'
-push 111 ; o
+push '\x6f' ; o
 outchr
-push ','
+push '\u002c'
 outchr
 push ' '
 outchr
@@ -22,6 +23,6 @@ push 'l'
 outchr
 push 'd'
 outchr
-push '!' ; character literals work too
+push '!'
 outchr
 end ; end the program

@@ -7,13 +7,23 @@
 %import common.CRLF
 %ignore WS_INLINE
 
-program: statement? (("\n" | "\r\n") statement)*
+program: statement? (("\n" | "\r\n")+ statement)*
 
-CHAR_LITERAL: "'" /[ -~]/ "'" // 0x20 to 0x7e
+PRINTABLE_CHARACTER: /[\x20-\x7e]/
+
+ESCAPE_SEQUENCE: /\\[abefnrtv\\'"?]/
+               | /\\[0-9]{3}/
+               | /\\x[0-9a-zA-Z]+/
+               | /\\u[0-9a-zA-Z]{4}/
+               | /\\U[0-9a-zA-Z]{8}/
+
+CHARACTER: PRINTABLE_CHARACTER | ESCAPE_SEQUENCE
+
+CHAR_LITERAL: "'" CHARACTER "'"
 NUMBER_LITERAL: SIGNED_INT
 LABEL_LITERAL: CNAME
 
-COMMENT: /;[^\n]*/ // adapted from common.SH_COMMENT
+COMMENT: /;[^\n]*(\r\n)?/ // adapted from common.SH_COMMENT
 
 instruction: "push" -> push
            | "dup" -> dup

@@ -1,5 +1,6 @@
 import sys
 import os
+from ast import literal_eval
 
 import lark
 
@@ -23,7 +24,7 @@ class WhitespaceAssemblyTransformer(lark.Transformer):
                        )
 
     def char_literal(self, items):
-        return ord(eval(items[0].value)) # dangerous
+        return ord(literal_eval(items[0].value))
 
     def program(self, items):
         return tuple(
