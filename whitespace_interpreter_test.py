@@ -1,7 +1,7 @@
 import whitespace as ws
 import whitespace_assembler as wsasm
 
-PROGRAM = open('test.wsasm').read()
+PROGRAM = open('programs/test.wsasm').read()
 
 TEMPLATE = open("whitespace_interpreter_test_template.c").read()
 
