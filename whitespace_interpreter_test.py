@@ -1,5 +1,5 @@
 import whitespace as ws
-import whitespace_assembly as wsasm
+import whitespace_assembler as wsasm
 
 PROGRAM = open('test.wsasm').read()
 
