@@ -16,6 +16,7 @@ if __name__ == "__main__":
             output = ws.parse(program)
         except lark.exceptions.LarkError as e:
             utility.write_error(file.name, e)
+            continue
         res = ''
         for stmt in output:
             res += stmt[0]
