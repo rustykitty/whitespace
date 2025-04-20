@@ -21,9 +21,9 @@ A number of shell scripts are available to allow for running the various Python 
 These include:
 
 - `ws` - Run the Whitespace interpreter (`whitespace.py`)
-- `wsasmc` - Run the Whitespace Assembly compiler (`whitespace_assembler.py`)
-- `wsasmexec` - Runs the Whitespace Assembly code directly.
-- `wsdasm` - Disassemble Whitespace code into Whitespace Assembly
+- `wsasmc` - Run the Whitespace Assembly compiler (`whitespace_assembler.py`) to produce a Whitespace source file.
+- `wsasmexec` - Directly interpret the Whitespace Assembly code.
+- `wsdasm` - Disassemble Whitespace code into Whitespace Assembly.
 
 ## Whitespace Assembly
 
