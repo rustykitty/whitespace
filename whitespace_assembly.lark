@@ -5,9 +5,11 @@
 %import common.CR
 %import common.LF
 %import common.CRLF
-%ignore WS_INLINE
+%ignore WS
 
-program: statement? (("\n" | "\r\n")+ statement)*
+NEWLINE: "\n" | "\r\n" 
+
+program: (NEWLINE* statement)* NEWLINE*
 
 PRINTABLE_CHARACTER: /[\x20-\x7e]/
 

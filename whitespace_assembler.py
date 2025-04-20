@@ -16,12 +16,9 @@ with open(GRAMMAR_PATH, "r") as f:
 class WhitespaceAssemblyTransformer(lark.Transformer):
     def number_literal(self, items):
         return int(items[0].value)
-    
+
     def label_literal(self, items):
-        return ''.join(bin(c)[2:]
-                       # .replace('1', '\t').replace('0', ' ')
-                       for c in bytearray(items[0].value, 'utf-8')
-                       )
+        return items[0].value
 
     def char_literal(self, items):
         return ord(literal_eval(items[0].value))
@@ -92,6 +89,16 @@ if __name__ == "__main__":
             prog = f.read()
             output = parse(prog)
             transformed_output = TRANSFORMER.transform(output)
+            transformed_output = tuple(
+                (
+                    stmt[0], 
+                    ''.join(bin(c)[2:]
+                        # .replace('1', '\t').replace('0', ' ')
+                        for c in bytearray(stmt[1], 'utf-8')
+                    )
+                ) if len(stmt) == 2 and isinstance(stmt[1], str) else stmt
+                for stmt in transformed_output
+            )
             ws_code = to_whitespace(transformed_output)
             with open(f.name + ".ws", "w") as out:
                 out.write(ws_code)

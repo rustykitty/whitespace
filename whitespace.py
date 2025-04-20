@@ -67,7 +67,7 @@ ops = (
             "store",
             "load",
             "label",
-            "jump",
+            "jmp",
             "jz",
             "jlz",
             "call",
