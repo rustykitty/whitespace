@@ -118,13 +118,39 @@ struct wstree_err* wsexecute(struct WS_statement* arr, size_t size) {
             ++label_count;
         }
     }
-    if (label_count) {
+    DEBUG("label_count = %zu\n", label_count);
+    if (label_count > 0) {
         labels = malloc(sizeof(struct WS_statement*) * (label_count + 1));
         labels[label_count] = NULL; // sentinel, should we need it
-        struct WS_statement** label_p = labels;
+        size_t x = 0;
         for (size_t i = 0; i < size; ++i) {
             if (arr[i].op == WS_LABEL) {
-                *(label_p++) = &arr[i];
+                DEBUG("Label %s at %zu\n", arr[i].label, i);
+                labels[x] = &arr[i];
+                ++x;
+            }
+        }
+    }
+
+    for (size_t i = 0; i < size; ++i) {
+        if (arr[i].op == WS_CALL ||
+            arr[i].op == WS_JMP ||
+            arr[i].op == WS_JZ ||
+            arr[i].op == WS_JLZ) {
+            if (!labels) {
+                e = GET_FORMATTED_ERROR_STRUCT(i, "Label %s was used but never defined", arr[i].label);
+                goto end_program;
+            }
+            struct WS_statement* label = NULL;
+            for (size_t j = 0; j < label_count; ++j) {
+                if (strcmp(labels[j]->label, arr[i].label) == 0) {
+                    label = labels[j];
+                    break;
+                }
+            }
+            if (!label) {
+                e = GET_FORMATTED_ERROR_STRUCT(i, "Label %s was used but never defined", arr[i].label);
+                goto end_program;
             }
         }
     }
@@ -378,10 +404,11 @@ struct wstree_err* wsexecute(struct WS_statement* arr, size_t size) {
                 }
                 struct WS_statement* label = NULL;
                 for (size_t j = 0; j < label_count; ++j) {
-                    if (labels[j]->label == i.label) {
+                    if (labels[j] && labels[j]->label && strcmp(labels[j]->label, i.label) == 0) {
                         label = labels[j];
                         break;
                     }
+                    DEBUG("%zu: Found `%s` and are looking for `%s`\n", j, labels[j]->label, i.label);
                 }
                 if (!label) {
                     e = GET_FORMATTED_ERROR_STRUCT(p - arr, "Cannot find label %s", i.label);
