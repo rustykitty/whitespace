@@ -5,6 +5,7 @@ import os
 
 import lark
 
+import utility
 from utility import write_error
 
 import parse_python_tree
@@ -49,40 +50,15 @@ class AllTransformer(lark.Transformer):
             (item.data, *item.children) for item in items
         )
 
+OPERATIONS = tuple(utility.OPERATIONS.keys())
+
 def parse(prog: str):
     return AllTransformer().transform(parser.parse(''.join(x for x in prog if x in PROGRAM_CHARS)))
-
-ops = (
-            "push",
-            "dup",
-            "copy",
-            "swap",
-            "pop",
-            "slide",
-            "add",
-            "sub",
-            "mul",
-            "div",
-            "mod",
-            "store",
-            "load",
-            "label",
-            "jmp",
-            "jz",
-            "jlz",
-            "call",
-            "ret",
-            "end",
-            "outchr",
-            "outnum",
-            "inchr",
-            "innum"
-        )
 
 def interpret_c_wrapper(prog: tuple[str, int | str] | tuple[str] ):
     """Wrapper for C function"""
     prog = tuple(
-        (ops.index(x[0]), *(x[1:])) for x in prog
+        (OPERATIONS.index(x[0]), *(x[1:])) for x in prog
     )
     # call c function now
     parse_python_tree.parse_python_tree(prog)
