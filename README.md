@@ -33,10 +33,6 @@ My Whitespace Assembly language syntax is as follows:
 - An integer or any valid C character literal can be used for a numerical argument.
     - Examples of valid character literals are `'A'`, `'\x41'`, `'\u0041'` (all representing the character `A` or `0x41`).
 - All valid identifiers in C can be used for a label argument. This may be subject to change.
-    - Currently, the valid syntax for a label argument is like this: `label example_label`
+    - Currently, the valid syntax for a label argument is like this: `label label_name`
 - Comments start with `;` and are ignored.
 - Behavior follows that of my interpretation of the Whitespace programming language.
-
-TODO:
-
-- Jump precomputation
