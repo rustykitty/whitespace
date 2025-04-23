@@ -7,7 +7,7 @@
 
 #include "ws_operation.h"
 #include "exec_tree.c"
-#include "debug.h"
+#include "utility.h"
 
 static PyObject* 
 parse_python_tree(PyObject* self, PyObject* arg) 

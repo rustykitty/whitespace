@@ -39,6 +39,7 @@ struct WS_statement {
     union {
         ws_int num;
         label_type label;
+        struct WS_statement* label_ptr;
     };
 };
 

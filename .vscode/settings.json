@@ -5,7 +5,7 @@
         "stdio.h": "c",
         "string.h": "c",
         "stdlib.h": "c",
-        "debug.h": "c"
+        "utility.h": "c"
     },
     "makefile.configureOnOpen": true
 }

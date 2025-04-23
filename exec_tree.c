@@ -2,9 +2,10 @@
 #include <string.h>
 #include <stdlib.h>
 #include <sys/types.h>
+#include <errno.h>
 
 #include "ws_operation.h"
-#include "debug.h"
+#include "utility.h"
 
 #ifndef STACK_SIZE
 #define STACK_SIZE 512
@@ -22,11 +23,6 @@
 #error "CALLSTACK_SIZE cannot be less than 2."
 #endif
 
-struct wstree_err {
-    size_t index;
-    const char* message;
-};
-
 struct heap_entry {
     size_t address;
     ws_int value;
@@ -35,23 +31,6 @@ struct heap_entry {
 static struct heap_entry* heap = NULL;
 static size_t heap_size = 0;
 static size_t heap_capacity = 0;
-
-static char err_buf[127];
-
-#define GET_ERROR_STRUCT(_i, _m) ({          \
-    strcpy(err_buf, _m);                     \
-    struct wstree_err* _err = malloc(sizeof(struct wstree_err)); \
-    *_err = (struct wstree_err){             \
-        _i, err_buf                          \
-    };                                       \
-    _err;                                    \
-})
-
-#define GET_FORMATTED_ERROR_STRUCT(i, ...) ({ \
-    char _tmp[sizeof(err_buf)];               \
-    snprintf(_tmp, sizeof(err_buf), __VA_ARGS__); \
-    GET_ERROR_STRUCT(i, _tmp);                \
-})
 
 static struct heap_entry* _get_heap_node(size_t addr) {
     for (size_t i = 0; i < heap_size; ++i) {
@@ -92,8 +71,25 @@ static void heap_store(ws_int addr, ws_int val) {
  * @param addr The address to load from.
  * @returns A pointer to a valid heap entry if the address exists in the heap, NULL otherwise.
  */
-static struct heap_entry* heap_load(ws_int addr) {
+static inline struct heap_entry* heap_load(ws_int addr) {
     return _get_heap_node(addr);
+}
+
+static ALWAYS_INLINE int labelcmp(label_type a, label_type b) {
+    return strcmp(a, b) == 0;
+}
+
+static inline struct WS_statement* get_label(struct WS_statement** labels, size_t label_count, label_type label) {
+    if (!labels) {
+        return NULL;
+    }
+    for (size_t i = 0; i < label_count; ++i) {
+        if (labelcmp(labels[i]->label, label)) {
+            return labels[i];
+            break;
+        }
+    }
+    return NULL; // not found
 }
 
 /**
@@ -118,14 +114,12 @@ struct wstree_err* wsexecute(struct WS_statement* arr, size_t size) {
             ++label_count;
         }
     }
-    DEBUG("label_count = %zu\n", label_count);
     if (label_count > 0) {
         labels = malloc(sizeof(struct WS_statement*) * (label_count + 1));
         labels[label_count] = NULL; // sentinel, should we need it
         size_t x = 0;
         for (size_t i = 0; i < size; ++i) {
             if (arr[i].op == WS_LABEL) {
-                DEBUG("Label %s at %zu\n", arr[i].label, i);
                 labels[x] = &arr[i];
                 ++x;
             }
@@ -137,21 +131,12 @@ struct wstree_err* wsexecute(struct WS_statement* arr, size_t size) {
             arr[i].op == WS_JMP ||
             arr[i].op == WS_JZ ||
             arr[i].op == WS_JLZ) {
-            if (!labels) {
-                e = GET_FORMATTED_ERROR_STRUCT(i, "Label %s was used but never defined", arr[i].label);
-                goto end_program;
-            }
-            struct WS_statement* label = NULL;
-            for (size_t j = 0; j < label_count; ++j) {
-                if (strcmp(labels[j]->label, arr[i].label) == 0) {
-                    label = labels[j];
-                    break;
-                }
-            }
+            struct WS_statement* label = get_label(labels, label_count, arr[i].label);
             if (!label) {
                 e = GET_FORMATTED_ERROR_STRUCT(i, "Label %s was used but never defined", arr[i].label);
                 goto end_program;
             }
+            arr[i].label_ptr = label;
         }
     }
 
@@ -302,26 +287,11 @@ struct wstree_err* wsexecute(struct WS_statement* arr, size_t size) {
                 break;
             }
             case WS_CALL: {
-                if (!labels) {
-                    e = GET_FORMATTED_ERROR_STRUCT(p - arr, "Cannot find label %s", i.label);
-                    goto end_program;
-                }
-                struct WS_statement* label = NULL;
-                for (size_t j = 0; j < label_count; ++j) {
-                    if (labels[j]->label == i.label) {
-                        label = labels[j];
-                        break;
-                    }
-                }
-                if (!label) {
-                    e = GET_FORMATTED_ERROR_STRUCT(p - arr, "Cannot find label %s", i.label);
-                    goto end_program;
-                }
                 if (callstack_top >= callstack + CALLSTACK_SIZE) {
                     e = GET_ERROR_STRUCT(p - arr, "Callstack overflow");
                     goto end_program;
                 }
-                *(++callstack_top) = label;
+                *(++callstack_top) = i.label_ptr;
                 break;
             }
             case WS_JMP: {
@@ -374,7 +344,7 @@ struct wstree_err* wsexecute(struct WS_statement* arr, size_t size) {
                 if ((c = getchar()) != EOF) {
                     heap_store(*stack_top, c);
                 } else {
-                    e = GET_ERROR_STRUCT(p - arr, "IO error. Check errno and/or EOF/error flags of stdin");
+                    e = GET_FORMATTED_ERROR_STRUCT(p - arr, "%s", strerror(errno));
                     goto end_program;
                 }
                 break;
@@ -388,7 +358,7 @@ struct wstree_err* wsexecute(struct WS_statement* arr, size_t size) {
                 if (scanf("%jd\n", &n)) {
                     heap_store(*stack_top, n);
                 } else {
-                    e = GET_ERROR_STRUCT(p - arr, "Invalid number / IO error. Check errno and/or EOF/error flags of stdin");
+                    e = GET_FORMATTED_ERROR_STRUCT(p - arr, "Invalid number / IO error: %s", strerror(errno));
                     goto end_program;
                 }
                 break;
@@ -397,25 +367,10 @@ struct wstree_err* wsexecute(struct WS_statement* arr, size_t size) {
                 e = GET_FORMATTED_ERROR_STRUCT(p - arr, "Unknown option %d", i.op);
                 goto end_program;
             }
-            jump:
-                if (!labels) {
-                    e = GET_FORMATTED_ERROR_STRUCT(p - arr, "Cannot find label %s", i.label);
-                    goto end_program;
-                }
-                struct WS_statement* label = NULL;
-                for (size_t j = 0; j < label_count; ++j) {
-                    if (labels[j] && labels[j]->label && strcmp(labels[j]->label, i.label) == 0) {
-                        label = labels[j];
-                        break;
-                    }
-                    DEBUG("%zu: Found `%s` and are looking for `%s`\n", j, labels[j]->label, i.label);
-                }
-                if (!label) {
-                    e = GET_FORMATTED_ERROR_STRUCT(p - arr, "Cannot find label %s", i.label);
-                    goto end_program;
-                }
-                *callstack_top = label;
-
+            jump: {
+                *callstack_top = i.label_ptr;
+                break;
+            }
         }
         ++(*callstack_top);
     }
