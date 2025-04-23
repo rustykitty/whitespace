@@ -268,10 +268,7 @@ Module.symvers
 Mkfile.old
 dkms.conf
 
-### end C ###
-
-# generated from `make test`
-whitespace_interpreter_test.c 
+### end C ### 
 
 # generated whitespace files
 **/*.ws.wsasm
