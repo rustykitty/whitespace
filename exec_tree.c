@@ -341,10 +341,10 @@ struct wstree_err* wsexecute(struct WS_statement* arr, size_t size) {
                     goto end_program;
                 }
                 int c;
-                if ((c = getchar()) != EOF) {
+                if ((c = getchar()) != EOF || feof(stdin)) { // EOF is okay
                     heap_store(*stack_top, c);
-                } else {
-                    e = GET_FORMATTED_ERROR_STRUCT(p - arr, "%s", strerror(errno));
+                } else if (ferror(stdin)) {
+                    e = GET_FORMATTED_ERROR_STRUCT(p - arr, "Errno %d: %s", errno, strerror(errno));
                     goto end_program;
                 }
                 break;
@@ -358,6 +358,7 @@ struct wstree_err* wsexecute(struct WS_statement* arr, size_t size) {
                 if (scanf("%jd\n", &n)) {
                     heap_store(*stack_top, n);
                 } else {
+                    /* It's kinda hard to tell which one... */
                     e = GET_FORMATTED_ERROR_STRUCT(p - arr, "Invalid number / IO error: %s", strerror(errno));
                     goto end_program;
                 }

@@ -9,7 +9,6 @@ if __name__ == "__main__":
         try:
             prog = f.read()
             output = wsasm.parse(prog)
-            print(output.pretty())
             transformed_output = wsasm.TRANSFORMER.transform(output)
             ws.interpret_c_wrapper(transformed_output)
         except lark.exceptions.LarkError as e:

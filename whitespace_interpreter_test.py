@@ -8,7 +8,6 @@ TEMPLATE = open("whitespace_interpreter_test_template.c").read()
 if __name__ == '__main__':
     output = wsasm.parse(PROGRAM)
     t_out = wsasm.transform(output)
-    print(t_out)
     statements = []
     for stmt in t_out:
         op = str(stmt[0])
