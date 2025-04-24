@@ -5,7 +5,7 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
 
-#include "ws_operation.h"
+#include "whitespace.h"
 #include "exec_tree.c"
 #include "utility.h"
 

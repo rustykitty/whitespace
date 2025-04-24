@@ -1,5 +1,5 @@
-#ifndef WS_OPERATION_H
-#define WS_OPERATION_H
+#ifndef WHITESPACE_H
+#define WHITESPACE_H
 
 #include <stdint.h>
 
@@ -34,6 +34,15 @@ enum WS_operation {
 
 typedef const char* label_type;
 
+/**
+ * Information on the union:
+ * - `num` is undefined when `op` is not a valid operation that takes an 
+ *   integral argument.
+ * - `label` is defined when `op` is a valid operation which takes a label
+ *   argument, but only before label precomputation.
+ * - `label_ptr` is defined when `op` is a valid operation which takes a 
+ *   label argument, but after label precomputation.
+ */
 struct WS_statement {
     enum WS_operation op;
     union {

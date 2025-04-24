@@ -1,7 +1,7 @@
 {
     "files.associations": {
         "types.h": "c",
-        "ws_operation.h": "c",
+        "whitespace.h": "c",
         "stdio.h": "c",
         "string.h": "c",
         "stdlib.h": "c",

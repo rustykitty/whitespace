@@ -4,7 +4,7 @@
 #include <sys/types.h>
 #include <errno.h>
 
-#include "ws_operation.h"
+#include "whitespace.h"
 #include "utility.h"
 
 #ifndef STACK_SIZE
