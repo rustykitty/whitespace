@@ -93,7 +93,7 @@ static inline struct WS_statement* get_label(struct WS_statement** labels, size_
 }
 
 /**
- * Called from parse_python_tree to execute the parsed instructions after converting from Python
+ * Called from whitespace_module to execute the parsed instructions after converting from Python
  * @returns NULL on success, valid pointer on error (allocated using malloc)
  * @note For a struct wstree_err* err, free(err) when done.
  * @note err->message is statically allocated. DO NOT FREE IT.

@@ -9,11 +9,9 @@
 #include "exec_tree.c"
 #include "utility.h"
 
-static PyObject* 
-parse_python_tree(PyObject* self, PyObject* arg) 
-{
+static struct WS_statement* parse_tuple(PyObject* arg) {
     PyObject* prog;
-    if (!PyArg_Parse(arg, "O!:parse_python_tree", &PyTuple_Type, &prog)) {
+    if (!PyArg_Parse(arg, "O!:parse_and_exec", &PyTuple_Type, &prog)) {
         return NULL;
     }
     Py_ssize_t size = PyTuple_Size(prog);
@@ -67,36 +65,52 @@ parse_python_tree(PyObject* self, PyObject* arg)
             goto error_occurred;
         }
     }
-
-    struct wstree_err* err = wsexecute(arr, size);
-    if (err) {
-        PyErr_Format(PyExc_RuntimeError, "ERROR at position %zu: %s", err->index, err->message);
-        goto error_occurred;
-    }
-
-    free(arr);
-    Py_RETURN_NONE;
+    return arr;
     error_occurred:
     free(arr);
     return NULL;
 }
 
-static PyMethodDef wsexecute_methods[] = {
-    {"parse_python_tree", parse_python_tree, METH_O, "Execute the parsed whitespace tree"},
+static PyObject* 
+parse_and_exec(PyObject* self, PyObject* arg)
+{
+    PyObject* prog;
+    if (!PyArg_Parse(arg, "O!:parse_and_exec", &PyTuple_Type, &prog)) {
+        return NULL;
+    }
+
+    Py_ssize_t size = PyTuple_Size(prog);
+
+    struct WS_statement* arr = parse_tuple(arg);
+
+    if (!arr) return NULL;
+
+    struct wstree_err* err = wsexecute(arr, size);
+    if (err) {
+        PyErr_Format(PyExc_RuntimeError, "ERROR at position %zu: %s", err->index, err->message);
+        return NULL;
+    }
+
+    free(arr);
+    Py_RETURN_NONE;
+}
+
+static PyMethodDef whitespace_methods[] = {
+    {"parse_and_exec", parse_and_exec, METH_O, "Execute the parsed whitespace tree"},
     {NULL, NULL, 0, NULL} /* sentinel */
 };
 
-static struct PyModuleDef wsexecute_module = {
+static struct PyModuleDef whitespace_module = {
     PyModuleDef_HEAD_INIT,
-    "parse_python_tree",     /* name of module */
+    "whitespace_module",     /* name of module */
     NULL,         /* module documentation, may be NULL */
     -1,           /* size of per-interpreter state of the module,
                      or -1 if the module keeps state in global variables. */
-    wsexecute_methods
+    whitespace_methods
 };
 
 PyMODINIT_FUNC
-PyInit_parse_python_tree(void)
+PyInit_whitespace_module(void)
 {
-    return PyModule_Create(&wsexecute_module);
+    return PyModule_Create(&whitespace_module);
 }

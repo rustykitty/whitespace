@@ -8,7 +8,7 @@ import lark
 import utility
 from utility import write_error
 
-import parse_python_tree
+import whitespace_module
 
 PROGRAM_NAME = os.path.basename(__file__)
 
@@ -61,7 +61,7 @@ def interpret_c_wrapper(prog: tuple[str, int | str] | tuple[str] ):
         (OPERATIONS.index(x[0]), *(x[1:])) for x in prog
     )
     # call c function now
-    parse_python_tree.parse_python_tree(prog)
+    whitespace_module.parse_and_exec(prog)
 
 PROGRAM_CHARS = ' \t\n'
 

@@ -4,8 +4,8 @@ setup(
     name='foo',
     ext_modules=[
         Extension(
-            name='parse_python_tree', 
-            sources=['parse_python_tree.c'],
+            name='whitespace_module', 
+            sources=['whitespace_module.c'],
         ),
     ],
 )
