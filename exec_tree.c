@@ -75,7 +75,7 @@ static inline struct heap_entry* heap_load(ws_int addr) {
     return _get_heap_node(addr);
 }
 
-static ALWAYS_INLINE int labelcmp(label_type a, label_type b) {
+static inline ALWAYS_INLINE int labelcmp(label_type a, label_type b) {
     return strcmp(a, b) == 0;
 }
 

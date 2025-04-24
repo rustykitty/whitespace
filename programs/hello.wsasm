@@ -6,9 +6,9 @@ push '\x65' ; e
 outchr
 push '\154' ; l
 outchr
+push '\154';
 outchr ; outchr another time for second 'L'
-push '\x6f' ; o
-outchr
+call print_o
 push '\u002c'
 outchr
 push ' '
@@ -25,4 +25,9 @@ push 'd'
 outchr
 push '!'
 outchr
+slide 11
 end ; end the program
+label print_o
+push 'o'
+outchr
+ret
