@@ -5,10 +5,6 @@
 #include <errno.h>
 #include <math.h>
 
-#ifndef MAX
-#define MAX(x, y) (x > y ? x : y)
-#endif
-
 #include "whitespace.h"
 #include "utility.h"
 
