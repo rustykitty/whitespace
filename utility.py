@@ -4,8 +4,10 @@ import base64
 
 PROGRAM_NAME = os.path.basename(sys.argv[0])
 
-def write_error(filename, message):
-    return sys.stderr.write(f"{PROGRAM_NAME}: {filename}: {message}\n")
+def write_error(message, filename=None):
+    if filename:
+        message = f"{filename}: {message}"
+    return sys.stderr.write("{}: {}\n".format(PROGRAM_NAME, message))
 
 def open_files_in_argv():
     for filename in sys.argv[1:]:
@@ -15,7 +17,7 @@ def open_files_in_argv():
             try:
                 fp = open(filename)
             except OSError as e:
-                write_error(filename, e.strerror)
+                write_error(e.strerror, filename)
                 continue
             yield fp
 

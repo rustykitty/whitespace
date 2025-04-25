@@ -64,15 +64,9 @@ PROGRAM_CHARS = ' \t\n'
 def minify(program: str):
     return ''.join(c for c in program if c in PROGRAM_CHARS)
 
-if __name__ == "__main__":
-    for file in sys.argv[1:]:
-        try:
-            f = open(file)
-        except IOError as e:
-            write_error(file, e.strerror)
-            continue
-        try:
-            output = parse(f.read())
-            interpret_c_wrapper(output)
-        except lark.exceptions.LarkError as e:
-            write_error(file, e)
+def run(data, filename):
+    try:
+        output = parse(data)
+        interpret_c_wrapper(output)
+    except lark.exceptions.LarkError as e:
+        raise

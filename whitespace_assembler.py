@@ -56,24 +56,23 @@ def parse(prog):
 def transform(tree):
     return TRANSFORMER.transform(tree)
 
-if __name__ == "__main__":
-    for f in utility.open_files_in_argv():
-        try:
-            prog = f.read()
-            output = parse(prog)
-            transformed_output = TRANSFORMER.transform(output)
-            transformed_output = tuple(
-                (
-                    stmt[0], 
-                    ''.join(bin(c)[2:]
-                        # .replace('1', '\t').replace('0', ' ')
-                        for c in bytearray(stmt[1], 'utf-8')
-                    )
-                ) if len(stmt) == 2 and isinstance(stmt[1], str) else stmt
-                for stmt in transformed_output
-            )
-            ws_code = to_whitespace(transformed_output)
-            with open(f.name + ".ws", "w") as out:
-                out.write(ws_code)
-        except lark.exceptions.LarkError as e:
-            utility.write_error(f.name, e)
+def run(data, filename=None):
+    try:
+        output = parse(prog)
+        transformed_output = TRANSFORMER.transform(output)
+        transformed_output = tuple(
+            (
+                stmt[0], 
+                ''.join(bin(c)[2:]
+                    for c in bytearray(stmt[1], 'utf-8')
+                )
+            ) if len(stmt) == 2 and isinstance(stmt[1], str) else stmt
+            for stmt in transformed_output
+        )
+        ws_code = to_whitespace(transformed_output)
+        with open(filename + ".ws", "w") as out:
+            out.write(ws_code)
+    except lark.exceptions.LarkError as e:
+        raise
+    except OSError:
+        utility.write_error(filename + ".ws", e)

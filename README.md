@@ -16,14 +16,7 @@ Ensure that Poetry is installed. You can find instructions at <https://python-po
 
 `git clone` the repository. You will need to run `make` the to compile the C extension code prior to running it the first time, and recompile every time it is changed.
 
-A number of shell scripts are available to allow for running the various Python scripts with less typing.
-
-These include:
-
-- `ws` - Run the Whitespace interpreter (`whitespace.py`)
-- `wsasmc` - Run the Whitespace Assembly compiler (`whitespace_assembler.py`) to produce a Whitespace source file.
-- `wsasmexec` - Directly interpret the Whitespace Assembly code.
-- `wsdasm` - Disassemble Whitespace code into Whitespace Assembly.
+The python source files are not meant to be executed directly. Execute either `main.py` or `run.sh`. The help message will give you more information.
 
 ## Whitespace Assembly
 
