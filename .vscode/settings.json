@@ -5,7 +5,8 @@
         "stdio.h": "c",
         "string.h": "c",
         "stdlib.h": "c",
-        "utility.h": "c"
+        "utility.h": "c",
+        "math.h": "c"
     },
     "makefile.configureOnOpen": true
 }
