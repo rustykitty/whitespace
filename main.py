@@ -22,7 +22,7 @@ Commands:
 - wsdasm            disassemble whitespace files into Whitespace Assembly
 """
 
-if __name__ == "__main__":
+def main():
     if len(sys.argv) < 2:
         write_error(f"usage: {PROGRAM_NAME} <command> [file...]")
         sys.exit(1)
@@ -50,3 +50,7 @@ if __name__ == "__main__":
             run(f.read(), file)
         except lark.exceptions.LarkError as e:
             write_error(e, file)
+
+
+if __name__ == "__main__":
+    main()
