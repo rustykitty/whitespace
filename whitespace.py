@@ -2,6 +2,7 @@ import sys
 import re
 from typing import Callable, Any
 import os
+from base64 import b32encode
 
 import lark
 
@@ -36,15 +37,10 @@ class LiteralTransformer(lark.Transformer):
         return whitespace_number(items[0].value)
     
     def label_literal(self, items):
-        return items[0].replace('\t', '1').replace(' ', '0')
+        return '__auto_' + utility.compress_label(items[0], "\t", " ")
 
-class AllTransformer(lark.Transformer):
-    def number_literal(self, items):
-        return whitespace_number(items[0].value)
-    
-    def label_literal(self, items):
-        return items[0].replace('\t', '1').replace(' ', '0')
-    
+class AllTransformer(LiteralTransformer):
+
     def program(self, items):
         return tuple(
             (item.data, *item.children) for item in items

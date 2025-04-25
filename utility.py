@@ -1,5 +1,6 @@
 import sys
 import os
+import base64
 
 PROGRAM_NAME = os.path.basename(sys.argv[0])
 
@@ -44,3 +45,29 @@ OPERATIONS = {
     "inchr": "\t\n\t\n",
     "innum": "\t\n\t\t"
 }
+
+def zeroes_and_ones_to_bytes(s: str, zero: str = "0", one: str = "1"):
+    if s and s[-1] == '\n':
+        s = s[:-1]
+    s = str(s).replace(zero, "0").replace(one, "1")
+
+    l = len(s)
+    res = b''
+    while len(s) >= 8:
+        res += bytes((int(s[:8], 2),))
+        s = s[8:]
+    if s:
+        res += bytes((int(s.zfill(8), 2),))
+    return res
+
+def bytes_to_zeroes_and_ones(s: bytes, zero: str = "0", one: str = "1"):
+    return ''.join(
+        bin(c if isinstance(c, int) else ord(c))[2:].replace(zero, "0").replace(one, "1") for c in s
+    )
+
+def compress_label(s: str, zero: str = "0", one: str = "1"):
+    return base64.b32encode(zeroes_and_ones_to_bytes(s, zero, one)).decode("ascii").replace("=", "_")
+
+def decompress_label(s: str):
+    s = s.replace("_", "=").encode('ascii')
+    return bytes_to_zeroes_and_ones(base64.b32decode(s))
