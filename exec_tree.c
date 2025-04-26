@@ -213,7 +213,7 @@ struct wstree_err* wsexecute(struct WS_statement* arr, size_t size) {
             break;
         }
         case WS_SLIDE: {
-            if (stack_top <= stack) {
+            if (stack_top >= stack) {
                 ws_int top_value = *stack_top; 
                 ws_int* new_top = MAX(stack_top - i.num, stack);
                 *(stack_top = new_top) = top_value;

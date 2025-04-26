@@ -27,7 +27,7 @@ push '!'
 outchr
 push '\n'
 outchr
-slide 13
+slide 55
 end ; end the program
 label print_o
 push 'o'
