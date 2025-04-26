@@ -64,7 +64,7 @@ PROGRAM_CHARS = ' \t\n'
 def minify(program: str):
     return ''.join(c for c in program if c in PROGRAM_CHARS)
 
-def run(data, filename):
+def run(data, filename=None):
     try:
         output = parse(data)
         interpret_c_wrapper(output)

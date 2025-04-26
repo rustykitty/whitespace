@@ -39,7 +39,6 @@ static inline ALWAYS_INLINE size_t power_of_two(size_t n) {
     return res;
 }
 
-
 struct heap_entry {
     size_t address;
     ws_int value;

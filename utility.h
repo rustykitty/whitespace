@@ -11,11 +11,11 @@
 
 #ifndef ALWAYS_INLINE
 #if defined(__GNUC__) || defined(__clang__) || defined(__INTEL_COMPILER)
-#   define ALWAYS_INLINE __attribute__((always_inline))
+#define ALWAYS_INLINE __attribute__((always_inline))
 #elif defined(_MSC_VER)
-#   define ALWAYS_INLINE __forceinline
+#define ALWAYS_INLINE __forceinline
 #else
-#   define ALWAYS_INLINE
+#define ALWAYS_INLINE
 #endif
 #endif
 
@@ -41,12 +41,12 @@ char err_buf[127];
     GET_ERROR_STRUCT(_i, _tmp);                \
 })
 
-#endif
-
 #ifndef MAX
 #define MAX(x, y) (x > y ? x : y)
 #endif
 
 #ifndef MIN
 #define MIN(x, y) (x < y ? x : y)
+#endif
+
 #endif

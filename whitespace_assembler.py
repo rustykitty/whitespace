@@ -58,7 +58,7 @@ def transform(tree):
 
 def run(data, filename=None):
     try:
-        output = parse(prog)
+        output = parse(data)
         transformed_output = TRANSFORMER.transform(output)
         transformed_output = tuple(
             (
