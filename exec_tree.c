@@ -16,30 +16,57 @@
 #define CALLSTACK_SIZE 128
 #endif
 
-#if INITIAL_STACK_SIZE < 64
-#error "INITIAL_STACK_SIZE cannot be less than 64."
+#ifndef INITIAL_HEAP_SIZE
+#define INITIAL_HEAP_SIZE 256
 #endif
 
-#if CALLSTACK_SIZE < 2
-#error "CALLSTACK_SIZE cannot be less than 2."
-#endif
+static inline ALWAYS_INLINE unsigned char most_significant_bit_set(uintmax_t n) {
+    unsigned char res = 0;
+    while (n >>= 1) {
+        ++res;
+    }
+    return res;
+}
+
+static inline ALWAYS_INLINE size_t power_of_two(size_t n) {
+    size_t res = 0;
+    if (n == 0) {
+        return 1;
+    }
+    do {
+        res <<= 1;
+    } while (--n);
+    return res;
+}
+
 
 struct heap_entry {
     size_t address;
     ws_int value;
 };
 
-static struct heap_entry* heap = NULL;
-static size_t heap_size = 0;
-static size_t heap_capacity = 0;
+static ws_int* heap = NULL;
+static size_t heap_size;
 
-static struct heap_entry* _get_heap_node(size_t addr) {
-    for (size_t i = 0; i < heap_size; ++i) {
-        if (heap[i].address == addr) {
-            return &heap[i];
-        }
+static inline ALWAYS_INLINE ws_int* heap_init() {
+    heap = calloc(INITIAL_HEAP_SIZE, sizeof(size_t));
+    heap_size = INITIAL_HEAP_SIZE;
+    return heap;
+}
+
+static inline ALWAYS_INLINE void heap_free() {
+    free(heap);
+    heap = NULL;
+    heap_size = 0;
+}
+
+static inline void check_heap_space(size_t address) {
+    if (address >= heap_size) {
+        size_t old_size = heap_size;
+        size_t new_size = power_of_two(most_significant_bit_set(address) + 1);
+        heap = realloc(heap, new_size * sizeof(ws_int));
+        memset(heap + old_size, 0, (new_size - old_size) * sizeof(ws_int));
     }
-    return NULL;
 }
 
 /**
@@ -48,23 +75,9 @@ static struct heap_entry* _get_heap_node(size_t addr) {
  * @param val The value to store in the address
  */
 static void heap_store(ws_int addr, ws_int val) {
-    if (!heap) {
-        heap = malloc(sizeof(struct heap_entry));
-        heap_size = heap_capacity = 1;
-    }
-    struct heap_entry* p = _get_heap_node(addr);
-    if (p) {
-        p->value = val;
-    } else {
-        if (heap_size >= heap_capacity) {
-            // reallocate
-            heap = realloc(heap, (heap_size * 2) * sizeof(struct heap_entry));
-            heap_capacity = heap_size * 2;
-        }
-        heap[heap_size++] = (struct heap_entry){
-            addr, val
-        };
-    }
+    size_t address = (size_t)addr;
+    check_heap_space(address);
+    heap[address] = val;
 }
 
 /**
@@ -72,8 +85,9 @@ static void heap_store(ws_int addr, ws_int val) {
  * @param addr The address to load from.
  * @returns A pointer to a valid heap entry if the address exists in the heap, NULL otherwise.
  */
-static inline struct heap_entry* heap_load(ws_int addr) {
-    return _get_heap_node(addr);
+static inline ws_int heap_load(ws_int addr) {
+    check_heap_space((size_t)addr);
+    return heap[(size_t)addr];
 }
 
 static inline ALWAYS_INLINE int labelcmp(label_type a, label_type b) {
@@ -93,15 +107,6 @@ static inline struct WS_statement* get_label(struct WS_statement** labels, size_
     return NULL; // not found
 }
 
-// static inline ALWAYS_INLINE ws_int* stack_ensure_enough_space(ws_int* stack, ws_int* stack_top, size_t stack_capacity, size_t space_needed) {
-//     size_t current_stack_size = stack_top - stack;
-//     if (current_stack_size + space_needed > stack_capacity) {
-//         return realloc(stack, MAX(current_stack_size * 2, current_stack_size + stack_capacity));
-//     } else {
-//         return stack;
-//     }
-// }
-
 /**
  * Called from whitespace_module to execute the parsed instructions after converting from Python
  * @returns NULL on success, valid pointer on error (allocated using malloc)
@@ -117,6 +122,8 @@ struct wstree_err* wsexecute(struct WS_statement* arr, size_t size) {
     ws_int* stack = malloc(INITIAL_STACK_SIZE * sizeof(ws_int)),
         *stack_top = stack;
     size_t stack_size = INITIAL_STACK_SIZE;
+
+    heap_init();
 
     struct WS_statement** labels = NULL;
     size_t label_count = 0;
@@ -273,22 +280,26 @@ struct wstree_err* wsexecute(struct WS_statement* arr, size_t size) {
                 goto end_program;
             }
             ws_int addr = *(stack_top - 1), val = *stack_top;
+            if ((size_t)addr > SIZE_MAX) {
+                e = GET_ERROR_STRUCT(p - arr, "Heap address too large");
+                goto end_program;
+            }
             heap_store(addr, val);
             break;
         }
         case WS_LOAD: {
+            ws_int addr = *stack_top;
+            if ((size_t)addr > SIZE_MAX) {
+                e = GET_ERROR_STRUCT(p - arr, "Heap address too large");
+                goto end_program;
+            }
+            ws_int val = heap_load(addr);
             if ((size_t)(stack_top - stack) >= stack_size) {
                 stack_size = stack_size * 2;
                 stack = realloc(stack, stack_size);
             }
-            ws_int addr = *stack_top;
-            struct heap_entry* node = heap_load(addr);
-            if (node) {
-                *(++stack_top) = node->value;
-            } else {
-                e = GET_FORMATTED_ERROR_STRUCT(p - arr, "Address %jd not found", addr);
-                goto end_program;
-            }
+            ++stack_top;
+            *stack_top = val;
             break;
         }
         case WS_LABEL: {
@@ -390,6 +401,7 @@ struct wstree_err* wsexecute(struct WS_statement* arr, size_t size) {
     end_program:
     free(stack);
     if (labels) free(labels);
+    heap_free();
     return e;
 }
 
