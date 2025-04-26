@@ -1,27 +1,15 @@
 %import common.SIGNED_INT
 %import common.WS
-%import common.WS_INLINE
 %import common.CNAME
-%import common.CR
-%import common.LF
-%import common.CRLF
+
 %ignore WS
+
+%import .character_literal.CHARACTER_LITERAL
 
 NEWLINE: "\n" | "\r\n" 
 
 program: (NEWLINE* statement)* NEWLINE*
 
-PRINTABLE_CHARACTER: /[\x20-\x7e]/
-
-ESCAPE_SEQUENCE: /\\[abefnrtv\\'"?]/
-               | /\\[0-9]{3}/
-               | /\\x[0-9a-zA-Z]+/
-               | /\\u[0-9a-zA-Z]{4}/
-               | /\\U[0-9a-zA-Z]{8}/
-
-CHARACTER: PRINTABLE_CHARACTER | ESCAPE_SEQUENCE
-
-CHAR_LITERAL: "'" CHARACTER "'"
 NUMBER_LITERAL: SIGNED_INT
 LABEL_LITERAL: CNAME
 
@@ -56,6 +44,6 @@ statement: instruction literal?
 
 ?literal: NUMBER_LITERAL -> number_literal
         | LABEL_LITERAL -> label_literal
-        | CHAR_LITERAL -> char_literal
+        | CHARACTER_LITERAL -> char_literal
 
 %ignore COMMENT
