@@ -314,17 +314,17 @@ struct wstree_err* wsexecute(struct WS_statement* arr, size_t size) {
             break;
         }
         case WS_JMP: {
-            goto jump;
+            *callstack_top = i.label_ptr;
             break;
         }
         case WS_JZ: {
             if (*stack_top == 0)
-                goto jump;
+                *callstack_top = i.label_ptr;
             break;
         }
         case WS_JLZ: {
             if (*stack_top < 0)
-                goto jump;
+                *callstack_top = i.label_ptr;
             break;
         }
         case WS_RET: {
@@ -386,10 +386,6 @@ struct wstree_err* wsexecute(struct WS_statement* arr, size_t size) {
         default: {
             e = GET_FORMATTED_ERROR_STRUCT(p - arr, "Unknown option %d", i.op);
             goto end_program;
-        }
-        jump: {
-            *callstack_top = i.label_ptr;
-            break;
         }
         }
         ++(*callstack_top);
