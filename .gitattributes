@@ -1,0 +1,5 @@
+**/*.wsasm linguist-language=Assembly
+**/*.wsasm.ws linguist-generated
+**/*.ws.wsasm linguist-generated
+# for lack of better language categorization:
+**/*.ws linguist-language=Assembly
