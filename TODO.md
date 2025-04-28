@@ -1,0 +1,1 @@
+- Support for labels in the form `label_identifier:<newline>`
