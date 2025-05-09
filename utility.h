@@ -20,11 +20,19 @@
 #endif
 
 #ifndef MAX
-#define MAX(x, y) (x > y ? x : y)
+#define MAX(__x, __y) ({               \
+    __typeof__(__x) __a = __x;         \
+    __typeof__(__y) __b = __y;         \
+    __a > __b ? __a : __b;             \
+})
 #endif
 
 #ifndef MIN
-#define MIN(x, y) (x < y ? x : y)
+#define MIN(__x, __y) ({               \
+    __typeof__(__x) __a = __x;         \
+    __typeof__(__y) __b = __y;         \
+    __a < __b ? __a : __b;             \
+})
 #endif
 
 #endif
