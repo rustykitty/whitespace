@@ -17,7 +17,9 @@
         "optional": "c",
         "ratio": "c",
         "tuple": "c",
-        "vector": "c"
+        "vector": "c",
+        "exec_tree.h": "c",
+        "errno.h": "c"
     },
     "makefile.configureOnOpen": true
 }

@@ -6,7 +6,7 @@
 #include <Python.h>
 
 #include "whitespace.h"
-#include "exec_tree.c"
+#include "exec_tree.h"
 #include "utility.h"
 
 static struct WS_statement* parse_tuple(PyObject* arg) {

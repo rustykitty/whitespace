@@ -7,6 +7,7 @@
 
 #include "whitespace.h"
 #include "utility.h"
+#include "exec_tree.h"
 
 #ifndef INITIAL_STACK_SIZE
 #define INITIAL_STACK_SIZE 512
@@ -20,32 +21,13 @@
 #define INITIAL_HEAP_SIZE 256
 #endif
 
-static inline ALWAYS_INLINE unsigned char most_significant_bit_set(uintmax_t n) {
-    unsigned char res = 0;
-    while (n >>= 1) {
-        ++res;
-    }
-    return res;
-}
-
-static inline ALWAYS_INLINE size_t power_of_two(size_t n) {
-    size_t res = 0;
-    if (n == 0) {
-        return 1;
-    }
-    do {
-        res <<= 1;
-    } while (--n);
-    return res;
-}
-
 struct heap_entry {
     size_t address;
     ws_int value;
 };
 
-static ws_int* heap = NULL;
-static size_t heap_size;
+ws_int* heap = NULL;
+size_t heap_size;
 
 static inline ALWAYS_INLINE ws_int* heap_init() {
     heap = calloc(INITIAL_HEAP_SIZE, sizeof(size_t));
@@ -59,10 +41,22 @@ static inline ALWAYS_INLINE void heap_free() {
     heap_size = 0;
 }
 
+#define MOST_SIGNIFICANT_BIT_SET(__n)  \
+     ({                                \
+        unsigned char __res = 0;       \
+        while (__n) {                  \
+            __n <<= 1;                 \
+            __res++;                   \
+            }                          \
+        __res;                         \
+     })
+
+#define POWER_OF_TWO(__n) (__n == 0 ? 1 : 1ULL << (__n - 1))
+
 static inline void check_heap_space(size_t address) {
     if (address >= heap_size) {
         size_t old_size = heap_size;
-        size_t new_size = power_of_two(most_significant_bit_set(address) + 1);
+        size_t new_size = POWER_OF_TWO(MOST_SIGNIFICANT_BIT_SET(address) + 1);
         heap = realloc(heap, new_size * sizeof(ws_int));
         memset(heap + old_size, 0, (new_size - old_size) * sizeof(ws_int));
     }

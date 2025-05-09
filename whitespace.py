@@ -1,13 +1,10 @@
 import sys
 import re
-from typing import Callable, Any
 import os
-from base64 import b32encode
 
 import lark
 
 import utility
-from utility import write_error
 
 import whitespace_module
 
