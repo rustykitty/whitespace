@@ -1,4 +1,4 @@
-PYTHON = poetry run python
+PYTHON ?= poetry run python
 
 build: setup.py whitespace_module.c exec_tree.o error.o whitespace.h setup.py utility.h
 	poetry install --no-root
