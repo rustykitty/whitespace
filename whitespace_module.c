@@ -8,6 +8,7 @@
 #include "whitespace.h"
 #include "exec_tree.h"
 #include "utility.h"
+#include "error.h"
 
 static struct WS_statement* parse_tuple(PyObject* arg) {
     PyObject* prog;

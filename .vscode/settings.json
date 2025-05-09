@@ -19,7 +19,8 @@
         "tuple": "c",
         "vector": "c",
         "exec_tree.h": "c",
-        "errno.h": "c"
+        "errno.h": "c",
+        "error.h": "c"
     },
     "makefile.configureOnOpen": true
 }
