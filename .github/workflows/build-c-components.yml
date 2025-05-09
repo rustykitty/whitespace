@@ -23,6 +23,5 @@ jobs:
         python-version: 3.12
         architecture: x64
         cache: "poetry"
-    - uses: actions/checkout@v4
     - name: Run make
       run: make
