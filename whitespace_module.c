@@ -86,8 +86,10 @@ parse_and_exec(PyObject* self, PyObject* arg)
 
     if (!arr) return NULL;
 
-    struct wstree_err* err = wsexecute(arr, size);
-    if (err) {
+    Err_clearError();
+
+    if (!wsexecute(arr, size)) {
+        struct Err_Error* err = Err_getError();
         PyErr_Format(PyExc_RuntimeError, "ERROR at position %zu: %s", err->index, err->message);
         return NULL;
     }

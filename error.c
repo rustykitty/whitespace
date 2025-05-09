@@ -8,26 +8,42 @@
 #endif
 
 static char err_buf[ERR_BUF_SIZE];
-static wstree_err err_s;
+static Err_Error err_s = {
+    .index = 0,
+    .message = NULL
+};
 
-wstree_err* get_error_struct(size_t i, const char* m) {
+Err_Error* Err_setError(size_t i, const char* m) {
     strcpy(err_buf, m);
-    err_s = (wstree_err){
+    err_s = (Err_Error){
         .index = i, 
         .message = err_buf
     };
     return &err_s;
 }
 
-wstree_err* get_formatted_error_struct(size_t i, const char* format, ...) {
+Err_Error* Err_setErrorFromFormat(size_t i, const char* format, ...) {
     va_list args;
     va_start(args, format);
     vsnprintf(err_buf, sizeof(err_buf), format, args);
     va_end(args);
     
-    err_s = (wstree_err){
+    err_s = (Err_Error){
         .index = i,
         .message = err_buf
     };
     return &err_s;
+}
+
+Err_Error* Err_getError() {
+    return &err_s;
+}
+int Err_isSet() {
+    return err_s.message != NULL;
+}
+void Err_clearError() {
+    err_s = (Err_Error){
+        .index = 0,
+        .message = NULL
+    };
 }
