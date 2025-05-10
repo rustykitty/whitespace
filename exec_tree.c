@@ -143,7 +143,7 @@ int wsexecute(struct WS_statement* arr, size_t size) {
             arr[i].op == WS_JLZ) {
             struct WS_statement* label = get_label(labels, label_count, arr[i].label);
             if (!label) {
-                Err_setErrorFromFormat(i, "Label %s was used but never defined", arr[i].label);
+                Err_setErrorFromFormat(ERR_RUNTIME, i, "Label %s was used but never defined", arr[i].label);
                 goto end_program;
             }
             arr[i].label_ptr = label;
@@ -174,7 +174,7 @@ int wsexecute(struct WS_statement* arr, size_t size) {
         }
         case WS_SWAP: {
             if (stack_top - stack < 2) {
-                Err_setError(p - arr, "Not enough items on stack for swap");
+                Err_setError(ERR_RUNTIME, p - arr, "Not enough items on stack for swap");
                 goto end_program;
             }
             ws_int temp = *stack_top;
@@ -184,7 +184,7 @@ int wsexecute(struct WS_statement* arr, size_t size) {
         }
         case WS_POP: {
             if (stack_top <= stack) {
-                Err_setError(p - arr, "Not enough items on stack for pop");
+                Err_setError(ERR_RUNTIME, p - arr, "Not enough items on stack for pop");
                 goto end_program;
             }
             --stack_top;
@@ -192,7 +192,7 @@ int wsexecute(struct WS_statement* arr, size_t size) {
         }
         case WS_COPY: {
             if (stack_top - stack < i.num) {
-                Err_setError(p - arr, "Not enough items on stack for copy");
+                Err_setError(ERR_RUNTIME, p - arr, "Not enough items on stack for copy");
                 goto end_program;
             } else {
                 if ((size_t)(stack_top - stack) >= stack_size) {
@@ -210,14 +210,14 @@ int wsexecute(struct WS_statement* arr, size_t size) {
                 ws_int* new_top = MAX(stack_top - i.num, stack);
                 *(stack_top = new_top) = top_value;
             } else {
-                Err_setError(p - arr, "Not enough items on stack for slide");
+                Err_setError(ERR_RUNTIME, p - arr, "Not enough items on stack for slide");
                 goto end_program;
             }
             break;
         }
         case WS_ADD: {
             if (stack_top - stack <= 2) {
-                Err_setError(p - arr, "Not enough items on stack for arithmetic operation");
+                Err_setError(ERR_RUNTIME, p - arr, "Not enough items on stack for arithmetic operation");
                 goto end_program;
             }
             *(stack_top - 1) += *stack_top;
@@ -226,7 +226,7 @@ int wsexecute(struct WS_statement* arr, size_t size) {
         }
         case WS_SUB: {
             if (stack_top - stack <= 2) {
-                Err_setError(p - arr, "Not enough items on stack for arithmetic operation");
+                Err_setError(ERR_RUNTIME, p - arr, "Not enough items on stack for arithmetic operation");
                 goto end_program;
             }
             *(stack_top - 1) -= *stack_top;
@@ -235,7 +235,7 @@ int wsexecute(struct WS_statement* arr, size_t size) {
         }
         case WS_MUL: {
             if (stack_top - stack <= 2) {
-                Err_setError(p - arr, "Not enough items on stack for arithmetic operation");
+                Err_setError(ERR_RUNTIME, p - arr, "Not enough items on stack for arithmetic operation");
                 goto end_program;
             }
             *(stack_top - 1) *= *stack_top;
@@ -244,10 +244,10 @@ int wsexecute(struct WS_statement* arr, size_t size) {
         }
         case WS_DIV: {
             if (stack_top - stack <= 2) {
-                Err_setError(p - arr, "Not enough items on stack for arithmetic operation");
+                Err_setError(ERR_RUNTIME, p - arr, "Not enough items on stack for arithmetic operation");
                 goto end_program;
             } else if (*stack_top == 0) {
-                Err_setError(p - arr, "Cannot divide by zero");
+                Err_setError(ERR_RUNTIME, p - arr, "Cannot divide by zero");
                 goto end_program;
             }
             *(stack_top - 1) /= *stack_top;
@@ -256,10 +256,10 @@ int wsexecute(struct WS_statement* arr, size_t size) {
         }
         case WS_MOD: {
             if (stack_top - stack <= 2) {
-                Err_setError(p - arr, "Not enough items on stack for arithmetic operation");
+                Err_setError(ERR_RUNTIME, p - arr, "Not enough items on stack for arithmetic operation");
                 goto end_program;
             } else if (*stack_top == 0) {
-                Err_setError(p - arr, "Cannot divide by zero");
+                Err_setError(ERR_RUNTIME, p - arr, "Cannot divide by zero");
                 goto end_program;
             }
             *(stack_top - 1) %= *stack_top;
@@ -268,12 +268,12 @@ int wsexecute(struct WS_statement* arr, size_t size) {
         }
         case WS_STORE: {
             if (stack_top - stack <= 2) {
-                Err_setError(p - arr, "Not enough items on stack for heap store");
+                Err_setError(ERR_RUNTIME, p - arr, "Not enough items on stack for heap store");
                 goto end_program;
             }
             ws_int addr = *(stack_top - 1), val = *stack_top;
             if ((size_t)addr > SIZE_MAX) {
-                Err_setError(p - arr, "Heap address too large");
+                Err_setError(ERR_RUNTIME, p - arr, "Heap address too large");
                 goto end_program;
             }
             heap_store(addr, val);
@@ -282,7 +282,7 @@ int wsexecute(struct WS_statement* arr, size_t size) {
         case WS_LOAD: {
             ws_int addr = *stack_top;
             if ((size_t)addr > SIZE_MAX) {
-                Err_setError(p - arr, "Heap address too large");
+                Err_setError(ERR_RUNTIME, p - arr, "Heap address too large");
                 goto end_program;
             }
             ws_int val = heap_load(addr);
@@ -300,7 +300,7 @@ int wsexecute(struct WS_statement* arr, size_t size) {
         }
         case WS_CALL: {
             if (callstack_top >= callstack + CALLSTACK_SIZE) {
-                Err_setError(p - arr, "Callstack overflow");
+                Err_setError(ERR_RUNTIME, p - arr, "Callstack overflow");
                 goto end_program;
             }
             *(++callstack_top) = i.label_ptr;
@@ -322,7 +322,7 @@ int wsexecute(struct WS_statement* arr, size_t size) {
         }
         case WS_RET: {
             if (callstack_top <= callstack) {
-                Err_setError(p - arr, "Nothing to return");
+                Err_setError(ERR_RUNTIME, p - arr, "Nothing to return");
                 goto end_program;
             }
             --callstack_top;
@@ -333,7 +333,7 @@ int wsexecute(struct WS_statement* arr, size_t size) {
         }
         case WS_OUTCHR: {
             if (stack >= stack_top) {
-                Err_setError(p - arr, "stack underflow");
+                Err_setError(ERR_RUNTIME, p - arr, "stack underflow");
                 goto end_program;
             }
             putchar(*stack_top);
@@ -341,7 +341,7 @@ int wsexecute(struct WS_statement* arr, size_t size) {
         }
         case WS_OUTNUM: {
             if (stack >= stack_top) {
-                Err_setError(p - arr, "stack underflow");
+                Err_setError(ERR_RUNTIME, p - arr, "stack underflow");
                 goto end_program;
             }
             printf("%jd\n", *stack_top);
@@ -349,21 +349,21 @@ int wsexecute(struct WS_statement* arr, size_t size) {
         }
         case WS_INCHR: {
             if (stack >= stack_top) {
-                Err_setError(p - arr, "stack underflow");
+                Err_setError(ERR_RUNTIME, p - arr, "stack underflow");
                 goto end_program;
             }
             int c;
             if ((c = getchar()) != EOF || feof(stdin)) { // EOF is okay
                 heap_store(*stack_top, c);
             } else if (ferror(stdin)) {
-                Err_setErrorFromFormat(p - arr, "Errno %d: %s", errno, strerror(errno));
+                Err_setErrorFromFormat(ERR_RUNTIME, p - arr, "Errno %d: %s", errno, strerror(errno));
                 goto end_program;
             }
             break;
         }
         case WS_INNUM: {
             if (stack >= stack_top) {
-                Err_setError(p - arr, "stack underflow");
+                Err_setError(ERR_RUNTIME, p - arr, "stack underflow");
                 goto end_program;
             }
             ws_int n;
@@ -371,13 +371,13 @@ int wsexecute(struct WS_statement* arr, size_t size) {
                 heap_store(*stack_top, n);
             } else {
                 /* It's kinda hard to tell which one... */
-                Err_setErrorFromFormat(p - arr, "Invalid number / IO error: %s", strerror(errno));
+                Err_setErrorFromFormat(ERR_RUNTIME, p - arr, "Invalid number / IO error: %s", strerror(errno));
                 goto end_program;
             }
             break;
         }
         default: {
-            Err_setErrorFromFormat(p - arr, "Unknown option %d", i.op);
+            Err_setErrorFromFormat(ERR_RUNTIME, p - arr, "Unknown option %d", i.op);
             goto end_program;
         }
         }

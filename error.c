@@ -13,22 +13,24 @@ static Err_Error err_s = {
     .message = NULL
 };
 
-Err_Error* Err_setError(size_t i, const char* m) {
+Err_Error* Err_setError(enum Err_Type type, size_t i, const char* m) {
     strcpy(err_buf, m);
     err_s = (Err_Error){
+        .type = type,
         .index = i, 
         .message = err_buf
     };
     return &err_s;
 }
 
-Err_Error* Err_setErrorFromFormat(size_t i, const char* format, ...) {
+Err_Error* Err_setErrorFromFormat(enum Err_Type type, size_t i, const char* format, ...) {
     va_list args;
     va_start(args, format);
     vsnprintf(err_buf, sizeof(err_buf), format, args);
     va_end(args);
     
     err_s = (Err_Error){
+        .type = type,
         .index = i,
         .message = err_buf
     };
