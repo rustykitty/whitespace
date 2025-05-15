@@ -8,19 +8,9 @@
         "utility.h": "c",
         "math.h": "c",
         "stdint.h": "c",
-        "__bit_reference": "c",
-        "__node_handle": "c",
-        "bitset": "c",
-        "deque": "c",
-        "limits": "c",
-        "locale": "c",
-        "optional": "c",
-        "ratio": "c",
-        "tuple": "c",
-        "vector": "c",
         "exec_tree.h": "c",
         "errno.h": "c",
-        "error.h": "c"
+        "error.h": "c",
     },
     "makefile.configureOnOpen": true
 }
