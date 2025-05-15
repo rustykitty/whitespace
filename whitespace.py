@@ -54,7 +54,7 @@ def interpret_c_wrapper(prog: tuple[str, int | str] | tuple[str] ):
         (OPERATIONS.index(x[0]), *(x[1:])) for x in prog
     )
     # call c function now
-    whitespace_module.parse_and_exec(prog)
+    whitespace_module.exec_tree(prog)
 
 PROGRAM_CHARS = ' \t\n'
 
@@ -63,7 +63,7 @@ def minify(program: str):
 
 def run(data, filename=None):
     try:
-        output = parse(data)
-        interpret_c_wrapper(output)
-    except lark.exceptions.LarkError as e:
+        whitespace_module.parse_and_exec(data)
+    except RuntimeError as e:
+        print(repr(e))
         raise

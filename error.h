@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <sys/types.h>
 
 enum Err_Type {
@@ -5,6 +6,8 @@ enum Err_Type {
     ERR_PARSE = 1,
     ERR_RUNTIME = 2
 };
+
+extern const char* Err_Type_to_string[];
 
 struct Err_Error {
     enum Err_Type type;
@@ -19,3 +22,5 @@ Err_Error* Err_setErrorFromFormat(enum Err_Type type, size_t i, const char* form
 Err_Error* Err_getError();
 int Err_isSet();
 void Err_clearError();
+int Err_perror();
+int Err_fperror(FILE* stream);

@@ -9,10 +9,11 @@
 #include "exec_tree.h"
 #include "utility.h"
 #include "error.h"
+#include "parse_whitespace.h"
 
 static struct WS_statement* parse_tuple(PyObject* arg) {
     PyObject* prog;
-    if (!PyArg_Parse(arg, "O!:parse_and_exec", &PyTuple_Type, &prog)) {
+    if (!PyArg_Parse(arg, "O!:exec_tree", &PyTuple_Type, &prog)) {
         return NULL;
     }
     Py_ssize_t size = PyTuple_Size(prog);
@@ -73,10 +74,10 @@ static struct WS_statement* parse_tuple(PyObject* arg) {
 }
 
 static PyObject* 
-parse_and_exec(PyObject* self, PyObject* arg)
+exec_tree(PyObject* self, PyObject* arg)
 {
     PyObject* prog;
-    if (!PyArg_Parse(arg, "O!:parse_and_exec", &PyTuple_Type, &prog)) {
+    if (!PyArg_Parse(arg, "O!:exec_tree", &PyTuple_Type, &prog)) {
         return NULL;
     }
 
@@ -98,8 +99,37 @@ parse_and_exec(PyObject* self, PyObject* arg)
     Py_RETURN_NONE;
 }
 
+static PyObject*
+parse_and_exec(PyObject* self, PyObject* arg)
+{
+    PyObject* prog_o;
+    if (!PyArg_Parse(arg, "O!:parse_and_exec", &PyUnicode_Type, &prog_o)) {
+        return NULL;
+    }
+
+    const char* prog = PyUnicode_AsUTF8(prog_o);
+
+    Err_clearError();
+
+    struct WS_statement* tree = parse_whitespace(prog);
+    if (!tree) {
+        goto error;
+    }
+
+    if (!wsexecute(tree, strlen(prog))) {
+        goto error;
+    }
+    Py_RETURN_NONE;
+    error:
+    free(tree);
+    struct Err_Error* err = Err_getError();
+    PyErr_Format(PyExc_RuntimeError, "ERROR at position %zu: %s", err->index, err->message);
+    return NULL;
+}
+
 static PyMethodDef whitespace_methods[] = {
-    {"parse_and_exec", parse_and_exec, METH_O, "Execute the parsed whitespace tree"},
+    {"exec_tree", exec_tree, METH_O, "Execute the parsed whitespace tree (a tuple)"},
+    {"parse_and_exec", parse_and_exec, METH_O, "Parse and execute whitespace source (a str)"},
     {NULL, NULL, 0, NULL} /* sentinel */
 };
 

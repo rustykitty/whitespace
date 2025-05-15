@@ -11,6 +11,7 @@
         "exec_tree.h": "c",
         "errno.h": "c",
         "error.h": "c",
+        "parse_whitespace.h": "c"
     },
     "makefile.configureOnOpen": true
 }
