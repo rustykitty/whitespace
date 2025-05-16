@@ -59,7 +59,7 @@ void Err_clearError() {
 }
 
 int Err_perror()  {
-    return Err_perror(stderr);
+    return Err_fperror(stderr);
 }
 
 int Err_fperror(FILE* stream) {
