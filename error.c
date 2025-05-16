@@ -7,7 +7,7 @@
 #define ERR_BUF_SIZE 127
 #endif
 
-extern const char* Err_Type_to_string[] = {
+const char* Err_Type_to_string[] = {
     [ERR_NONE] = "ERR_NONE",
     [ERR_PARSE] = "ERR_PARSE",
     [ERR_RUNTIME] = "ERR_RUNTIME"
