@@ -3,10 +3,6 @@
 #include <string.h>
 #include "error.h"
 
-#ifndef ERR_BUF_SIZE
-#define ERR_BUF_SIZE 127
-#endif
-
 const char* Err_Type_to_string[] = {
     [ERR_NONE] = "ERR_NONE",
     [ERR_PARSE] = "ERR_PARSE",

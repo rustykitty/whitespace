@@ -1,6 +1,10 @@
 #include <stdio.h>
 #include <sys/types.h>
 
+#ifndef ERR_BUF_SIZE
+#define ERR_BUF_SIZE 127
+#endif
+
 enum Err_Type {
     ERR_NONE = 0,
     ERR_PARSE = 1,
