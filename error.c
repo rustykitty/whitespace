@@ -64,7 +64,7 @@ int Err_perror()  {
 
 int Err_fperror(FILE* stream) {
     if (Err_isSet()) {
-        return fprintf(stream, "%s: %s\n", Err_Type_to_string[err_s.type], err_s.message || "");
+        return fprintf(stream, "%s: %s\n", Err_Type_to_string[err_s.type], err_s.message ? err_s.message : "");
     }
     return 0;
 }
