@@ -111,12 +111,13 @@ parse_and_exec(PyObject* self, PyObject* arg)
 
     Err_clearError();
 
-    struct WS_statement* tree = parse_whitespace(prog);
+    size_t size;
+    struct WS_statement* tree = parse_whitespace(prog, &size);
     if (!tree) {
         goto error;
     }
 
-    if (!wsexecute(tree, strlen(prog))) {
+    if (!wsexecute(tree, size)) {
         goto error;
     }
     Py_RETURN_NONE;

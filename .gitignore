@@ -273,3 +273,5 @@ dkms.conf
 # generated whitespace files
 **/*.ws.wsasm
 **/*.wsasm.ws
+
+whitespace_parser

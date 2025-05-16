@@ -4,11 +4,6 @@ from utility import write_error, PROGRAM_NAME
 
 import lark
 
-import whitespace as ws
-import whitespace_assembler as wsasmc
-import whitespace_assemble_and_run as wsasmexec
-import whitespace_disassemble as wsdasm
-
 HELP_TEXT = f"""
 Usage: {PROGRAM_NAME} <command> [file...]
 
@@ -29,12 +24,16 @@ def main():
 
     mode = sys.argv[1]
     if mode in ("ws", "whitespace"):
+        import whitespace as ws
         run = ws.run
     elif mode == "wsasmc":
+        import whitespace_assembler as wsasmc
         run = wsasmc.run
     elif mode == "wsasmexec":
+        import whitespace_assemble_and_run as wsasmexec
         run = wsasmexec.run
     elif mode == "wsdasm":
+        import whitespace_disassemble as wsdasm
         run = wsdasm.run
     else:
         sys.stderr.write(HELP_TEXT)

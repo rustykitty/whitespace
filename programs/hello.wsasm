@@ -6,7 +6,7 @@ push '\x65' ; e
 outchr
 push '\154' ; l
 outchr
-push '\154';
+push '\154'
 outchr ; outchr another time for second 'L'
 call print_o
 push '\u002c'

@@ -9,7 +9,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/whitespace_parser",
-            "args": ["${workspaceFolder}/programs/hello.ws"],
+            "args": ["${workspaceFolder}/programs/hello_2.wsasm.ws"],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
             "environment": [],

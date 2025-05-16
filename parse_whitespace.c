@@ -61,8 +61,8 @@ static ws_int parse_number(const char** str_p) {
         num = (num << 1) | (*str == '\t');
         ++str;
     }
-    *str_p = str;
-    return num;
+    *str_p = str + 1;
+    return negative ? -num : num;
 }
 
 static label_type parse_label(const char** str_p) {
@@ -72,7 +72,7 @@ static label_type parse_label(const char** str_p) {
         Err_setError(ERR_PARSE, 0, "Unexpected end of input");
         return NULL;
     }
-    *str_p = memchr_result;
+    *str_p = memchr_result + 1;
     size_t length = memchr_result - str;
     char* restrict label = calloc(length + 1, 1);
     for (size_t i = 0; str[i] && str[i] != '\n'; ++i) {
@@ -111,7 +111,7 @@ struct WS_statement* parse_whitespace(const char* str, size_t* size_p) {
     const char* p = minified;
     size_t i = 0;
     while (*p) {
-        fprintf(stderr, "[DEBUG] %zd\n", p - minified);
+        fprintf(stderr, "[DEBUG] %zd\n", p - beg);
         ssize_t instruction = find_instruction(&p);
         if (instruction < 0) {
             goto error;
@@ -119,12 +119,14 @@ struct WS_statement* parse_whitespace(const char* str, size_t* size_p) {
         struct WS_statement statement = {
             .op = instruction
         };
+        fprintf(stderr, "[DEBUG] Got instruction %zd\n", instruction);
         switch (instruction) {
         case WS_PUSH:
         case WS_COPY:
         case WS_SLIDE:
             {
-                int n = parse_number(&p);
+                const ws_int n = parse_number(&p);
+                fprintf(stderr, "[DEBUG] Parsed number %zd\n", n);
                 if (Err_isSet()) {
                     goto error;
                 }
@@ -141,6 +143,7 @@ struct WS_statement* parse_whitespace(const char* str, size_t* size_p) {
                 if (!label) {
                     goto error;
                 }
+                fprintf(stderr, "[DEBUG] Parsed label %s\n", label);
                 statement.label = label;
                 break;
             }
@@ -148,17 +151,13 @@ struct WS_statement* parse_whitespace(const char* str, size_t* size_p) {
         break;
         }
         arr[i] = statement;
-        ++p;
         ++i;
     }
 
     
-    arr = realloc(arr, (i + 1) * sizeof(struct WS_statement));
+    arr = realloc(arr, i * sizeof(struct WS_statement));
 
-    // we have a sentinel. that's how the caller will know the length
-    arr[i] = (struct WS_statement){
-        .op = -1
-    };
+    *size_p = i;
 
     free(minified);
 
