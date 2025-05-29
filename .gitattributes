@@ -1,7 +1,8 @@
 **/*.wsasm.ws linguist-generated
 **/*.ws.wsasm linguist-generated
 **/*.wsasm linguist-language=Assembly
-# for lack of better language categorization:
-**/*.ws linguist-language=Assembly
+
+# vendored is to exclude from stats, because it's not Witcher Script (whatever that is)
+**/*.ws binary linguist-vendored	
 
 poetry.lock linguist-generated
