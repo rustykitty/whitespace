@@ -11,18 +11,21 @@ For commands which read from files given as command-line arguments, stdin is
 assumed if no file arguments are given.
 
 Commands:
-- ws, whitespace    interpret and execute whitespace files
-- wsasmc            compile Whitespace Assembly files to whitespace
-- wsasmexec         interpret and execute Whitespace Assembly files, skipping compilation
-- wsdasm            disassemble whitespace files into Whitespace Assembly
+- ws, whitespace    interpret and execute Whitespace files
+- wsasmc            compile Whitespace Assembly files to Whitespace
+- wsasmexec         interpret and execute Whitespace Assembly files, without compiling
+- wsdasm            disassemble Whitespace files into Whitespace Assembly
 """
 
 def main():
     if len(sys.argv) < 2:
-        write_error(f"usage: {PROGRAM_NAME} <command> [file...]")
+        write_error(f"usage: {PROGRAM_NAME} <command> [file...]\ntry '{PROGRAM_NAME} help'")
         sys.exit(1)
 
     mode = sys.argv[1]
+    if mode == "help":
+        print(HELP_TEXT)
+        sys.exit(0)
     if mode in ("ws", "whitespace"):
         import whitespace as ws
         run = ws.run
@@ -35,9 +38,6 @@ def main():
     elif mode == "wsdasm":
         import whitespace_disassemble as wsdasm
         run = wsdasm.run
-    else:
-        sys.stderr.write(HELP_TEXT)
-        sys.exit(1)
 
     for file in sys.argv[2:]:
         try:
