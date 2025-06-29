@@ -13,15 +13,15 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - name: Install poetry
-      uses: abatilo/actions-poetry@v3
+    - name: Install the latest version of uv
+      uses: astral-sh/setup-uv@v6
       with:
-        poetry-version: latest
+        version: "latest"
+        enable-cache: true
     - name: Setup Python
       uses: actions/setup-python@v5
       with:
         python-version: 3.12
         architecture: x64
-        cache: "poetry"
     - name: Run make
       run: make
