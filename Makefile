@@ -1,7 +1,7 @@
-PYTHON ?= poetry run python
+PYTHON ?= uv run python
 
 build: setup.py whitespace_module.c exec_tree.o error.o whitespace.h setup.py utility.h parse_whitespace.o
-	poetry install --no-root
+	uv sync
 	rm -rf build/
 	CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS) exec_tree.o error.o parse_whitespace.o" \
 	$(PYTHON) setup.py build_ext -i 
