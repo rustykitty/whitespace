@@ -3,22 +3,16 @@ name = "whitespace"
 version = "0.1.0"
 description = "Whitespace interpreter / assembler"
 authors = [
-    {name = "Rusty",email = "rusty3925@gmail.com"}
+    {name = "Rusty", email = "rusty3925@gmail.com"}
 ]
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.13"
 dependencies = [
-    "lark (==1.2.2)",
-    "setuptools (==78.1.0)",
+    "lark>=1.2.2",
+    "setuptools>=80.9.0",
 ]
 
-[build-system]
-requires = ["poetry-core>=2.0.0,<3.0.0"]
-build-backend = "poetry.core.masonry.api"
-
-[tool.setuptools]
-py-modules = []
-
-[tool.poetry.group.dev.dependencies]
-pylint = "^3.3.6"
-
+[dependency-groups]
+dev = [
+    "pylint>=3.3.7",
+]
