@@ -162,12 +162,12 @@ struct WS_statement* parse_whitespace(const char* str, size_t* size_p) {
 
     *size_p = i;
 
-    free(minified);
+    free((void*)minified);
 
     return arr;
 
     error:
-    free(minified);
+    free((void*)minified);
     free(arr);
     return NULL;
 }
