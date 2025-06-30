@@ -10,7 +10,7 @@ import whitespace_module
 
 PROGRAM_NAME = os.path.basename(__file__)
 
-GRAMMAR_PATH = "whitespace.lark"
+GRAMMAR_PATH = os.path.join(os.path.dirname(__file__), "whitespace.lark")
 
 with open(GRAMMAR_PATH, "r") as f:
     parser = lark.Lark(f.read(), start="program")

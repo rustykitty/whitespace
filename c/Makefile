@@ -1,3 +1,5 @@
+all: exec_tree.o error.o parse_whitespace.o
+
 exec_tree.o: exec_tree.c exec_tree.h whitespace.h
 	$(CC) $(CFLAGS) -fPIC -c exec_tree.c -o exec_tree.o
 
