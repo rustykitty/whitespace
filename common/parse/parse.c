@@ -1,7 +1,7 @@
-#include "error.h"
-#include "whitespace.h"
-#include "utility.h"
-#include "parse/parse.h"
+#include "../error.h"
+#include "../whitespace.h"
+#include "../utility.h"
+#include "parse.h"
 
 #include <stdlib.h>
 #include <string.h>

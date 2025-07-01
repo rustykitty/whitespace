@@ -54,8 +54,6 @@ int WS_execute(struct WS_statement* arr, size_t size) {
         *stack_top = stack;
     size_t stack_size = INITIAL_STACK_SIZE;
 
-    heap_init();
-
     struct WS_statement** labels = NULL;
     size_t label_count = 0;
     for (size_t i = 0; i < size; ++i) {
@@ -320,6 +318,5 @@ int WS_execute(struct WS_statement* arr, size_t size) {
     end_program:
     free(stack);
     if (labels) free(labels);
-    heap_free();
     return !Err_isSet();
 }

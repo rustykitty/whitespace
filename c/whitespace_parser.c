@@ -45,13 +45,13 @@ int main (int argc, char* argv[]) {
         fclose(file);
 
         size_t size;
-        struct WS_statement* program = parse_whitespace(buf, &size);
+        struct WS_statement* program = WS_parse(buf, &size);
 
         if (program == NULL) {
             goto error;
         }
 
-        if (!wsexecute(program, size)) {
+        if (!WS_execute(program, size)) {
             goto error;
         }
 
