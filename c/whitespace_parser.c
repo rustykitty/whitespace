@@ -2,10 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "whitespace.h"
-#include "parse_whitespace.h"
-#include "exec_tree.h"
-#include "error.h"
+#include "../common/whitespace.h"
+#include "../common/parse_whitespace.h"
+#include "../common/exec_tree.h"
+#include "../common/error.h"
 
 #include <sys/stat.h>
 
@@ -56,7 +56,6 @@ int main (int argc, char* argv[]) {
         }
 
         error:
-        fprintf(stderr, "%s: ", *p);
         Err_perror();
         free(buf);
         return 1;

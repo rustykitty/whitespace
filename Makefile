@@ -1,11 +1,15 @@
-SUBDIRS := c python
+SUBDIRS := $(dir $(wildcard */Makefile))
 
-all:
-	make -C c
-	make -C python
-
-
+all: $(SUBDIRS)
+$(SUBDIRS):
+	$(MAKE) -C $@
+:
 clean:
-	rm -rf python/build/ out/ **.o **.so **.dSYM/ **.gch
+	@for dir in $(SUBDIRS); do \
+		if $(MAKE) -C $$dir --dry-run clean > /dev/null 2>&1; then \
+			echo "$(MAKE) -C $$dir clean"; \
+			$(MAKE) -C $$dir clean; \
+		fi; \
+	done
 
 .PHONY: all $(SUBDIRS)

@@ -111,7 +111,7 @@ struct WS_statement* parse_whitespace(const char* str, size_t* size_p) {
     const char* p = minified;
     size_t i = 0;
     while (*p) {
-        fprintf(stderr, "[DEBUG] %zd\n", p - beg);
+        DEBUG("[DEBUG] %zd\n", p - beg);
         ssize_t instruction = find_instruction(&p);
         if (instruction < 0) {
             Err_getError()->index = p - beg;
@@ -120,14 +120,14 @@ struct WS_statement* parse_whitespace(const char* str, size_t* size_p) {
         struct WS_statement statement = {
             .op = instruction
         };
-        fprintf(stderr, "[DEBUG] Got instruction %zd\n", instruction);
+        DEBUG("[DEBUG] Got instruction %zd\n", instruction);
         switch (instruction) {
         case WS_PUSH:
         case WS_COPY:
         case WS_SLIDE:
             {
                 const ws_int n = parse_number(&p);
-                fprintf(stderr, "[DEBUG] Parsed number %zd\n", n);
+                DEBUG("[DEBUG] Parsed number %zd\n", n);
                 if (Err_isSet()) {
                     Err_getError()->index = p - beg;
                     goto error;
@@ -146,7 +146,7 @@ struct WS_statement* parse_whitespace(const char* str, size_t* size_p) {
                     Err_getError()->index = p - beg;
                     goto error;
                 }
-                fprintf(stderr, "[DEBUG] Parsed label %s\n", label);
+                DEBUG("[DEBUG] Parsed label %s\n", label);
                 statement.label = label;
                 break;
             }

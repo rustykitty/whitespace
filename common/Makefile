@@ -11,3 +11,6 @@ parse_whitespace.o: parse_whitespace.c parse_whitespace.h whitespace.h
 
 whitespace_parser: whitespace_parser.c parse_whitespace.o whitespace.h exec_tree.o error.o
 	$(CC) $(CFLAGS) -o out/whitespace_parser whitespace_parser.c exec_tree.o error.o parse_whitespace.o
+
+clean:
+	rm -rf *.o *.gch *.dSYM
