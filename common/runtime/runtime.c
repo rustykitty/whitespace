@@ -5,10 +5,10 @@
 #include <errno.h>
 #include <math.h>
 
-#include "whitespace.h"
-#include "utility.h"
-#include "exec_tree.h"
-#include "error.h"
+#include "../whitespace.h"
+#include "../utility.h"
+#include "runtime.h"
+#include "../error.h"
 
 #ifndef INITIAL_STACK_SIZE
 #define INITIAL_STACK_SIZE 512

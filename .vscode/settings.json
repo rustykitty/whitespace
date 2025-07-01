@@ -8,10 +8,11 @@
         "utility.h": "c",
         "math.h": "c",
         "stdint.h": "c",
-        "exec_tree.h": "c",
+        "runtime/runtime.h": "c",
         "errno.h": "c",
         "error.h": "c",
-        "parse_whitespace.h": "c"
+        "parse_whitespace.h": "c",
+        "parse.h": "c"
     },
     "makefile.configureOnOpen": true
 }

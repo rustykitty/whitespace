@@ -58,8 +58,6 @@ struct WS_statement {
     };
 };
 
-struct WS_statement* WS_parse(const char*, size_t*);
-
 #ifdef __cplusplus
 }
 #endif

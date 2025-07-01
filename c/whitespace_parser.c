@@ -3,8 +3,8 @@
 #include <string.h>
 
 #include "../common/whitespace.h"
-#include "../common/parse_whitespace.h"
-#include "../common/exec_tree.h"
+#include "../common/parse/parse.h"
+#include "../common/runtime/runtime.h"
 #include "../common/error.h"
 
 #include <sys/stat.h>
