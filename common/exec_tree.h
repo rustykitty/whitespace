@@ -1,4 +1,4 @@
 #include "whitespace.h"
 #include "utility.h"
 
-int wsexecute(struct WS_statement*, size_t);
+int WS_execute(struct WS_statement*, size_t);

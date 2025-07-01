@@ -9,7 +9,6 @@
 #include "../common/exec_tree.h"
 #include "../common/utility.h"
 #include "../common/error.h"
-#include "../common/parse_whitespace.h"
 
 static struct WS_statement* parse_tuple(PyObject* arg) {
     PyObject* prog;
@@ -89,7 +88,7 @@ exec_tree(PyObject* self, PyObject* arg)
 
     Err_clearError();
 
-    if (!wsexecute(arr, size)) {
+    if (!WS_execute(arr, size)) {
         struct Err_Error* err = Err_getError();
         PyErr_Format(PyExc_RuntimeError, "ERROR at position %zu: %s", err->index, err->message);
         return NULL;
@@ -112,12 +111,12 @@ parse_and_exec(PyObject* self, PyObject* arg)
     Err_clearError();
 
     size_t size;
-    struct WS_statement* tree = parse_whitespace(prog, &size);
+    struct WS_statement* tree = WS_parse(prog, &size);
     if (!tree) {
         goto error;
     }
 
-    if (!wsexecute(tree, size)) {
+    if (!WS_execute(tree, size)) {
         goto error;
     }
     Py_RETURN_NONE;

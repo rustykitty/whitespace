@@ -44,7 +44,7 @@ static ssize_t find_instruction(const char** str_p) {
             return i;
         }
     }
-    Err_setErrorFromFormat(ERR_PARSE, 0, "Unknown instruction \"%s\"", str);
+    Err_setErrorFromFormat(ERR_PARSE, 0, "Unexpected end of input", str);
     return -1;
 }
 
@@ -100,7 +100,7 @@ static char* minify(const char* restrict str) {
     return result;
 }
 
-struct WS_statement* parse_whitespace(const char* str, size_t* size_p) {
+struct WS_statement* WS_parse(const char* str, size_t* size_p) {
     // overalloc on purpose, so we don't need to realloc many times (no dynamic array!)
     const char* minified = minify(str);
     // shortest instruction is 3 bytes long
@@ -157,7 +157,6 @@ struct WS_statement* parse_whitespace(const char* str, size_t* size_p) {
         ++i;
     }
 
-    
     arr = realloc(arr, i * sizeof(struct WS_statement));
 
     *size_p = i;

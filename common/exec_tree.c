@@ -105,7 +105,7 @@ static inline struct WS_statement* get_label(struct WS_statement** labels, size_
  * Called from whitespace_module to execute the parsed instructions after converting from Python
  * @returns nonzero on success, zero on failure
  */
-int wsexecute(struct WS_statement* arr, size_t size) {
+int WS_execute(struct WS_statement* arr, size_t size) {
     static struct Err_Error* e = NULL;
     static struct WS_statement *callstack[CALLSTACK_SIZE];
     struct WS_statement **callstack_top = callstack;
