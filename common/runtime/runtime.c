@@ -9,6 +9,7 @@
 #include "../utility.h"
 #include "runtime.h"
 #include "../error.h"
+#include "heap.h"
 
 #ifndef INITIAL_STACK_SIZE
 #define INITIAL_STACK_SIZE 512
@@ -21,68 +22,6 @@
 #ifndef INITIAL_HEAP_SIZE
 #define INITIAL_HEAP_SIZE 256
 #endif
-
-struct heap_entry {
-    size_t address;
-    ws_int value;
-};
-
-ws_int* heap = NULL;
-size_t heap_size;
-
-static inline ALWAYS_INLINE ws_int* heap_init() {
-    heap = calloc(INITIAL_HEAP_SIZE, sizeof(size_t));
-    heap_size = INITIAL_HEAP_SIZE;
-    return heap;
-}
-
-static inline ALWAYS_INLINE void heap_free() {
-    free(heap);
-    heap = NULL;
-    heap_size = 0;
-}
-
-#define MOST_SIGNIFICANT_BIT_SET(__n)  \
-     ({                                \
-        unsigned char __res = 0;       \
-        while (__n) {                  \
-            __n <<= 1;                 \
-            __res++;                   \
-            }                          \
-        __res;                         \
-     })
-
-#define POWER_OF_TWO(__n) (__n == 0 ? 1 : 1ULL << (__n - 1))
-
-static inline void check_heap_space(size_t address) {
-    if (address >= heap_size) {
-        size_t old_size = heap_size;
-        size_t new_size = POWER_OF_TWO(MOST_SIGNIFICANT_BIT_SET(address) + 1);
-        heap = realloc(heap, new_size * sizeof(ws_int));
-        memset(heap + old_size, 0, (new_size - old_size) * sizeof(ws_int));
-    }
-}
-
-/**
- * Store a value into the heap.
- * @param addr The address in the heap to store the value at
- * @param val The value to store in the address
- */
-static void heap_store(ws_int addr, ws_int val) {
-    size_t address = (size_t)addr;
-    check_heap_space(address);
-    heap[address] = val;
-}
-
-/**
- * Loads a value from the heap.
- * @param addr The address to load from.
- * @returns A pointer to a valid heap entry if the address exists in the heap, NULL otherwise.
- */
-static inline ws_int heap_load(ws_int addr) {
-    check_heap_space((size_t)addr);
-    return heap[(size_t)addr];
-}
 
 static inline ALWAYS_INLINE int labelcmp(label_type a, label_type b) {
     return strcmp(a, b) == 0;
@@ -272,20 +211,12 @@ int WS_execute(struct WS_statement* arr, size_t size) {
                 goto end_program;
             }
             ws_int addr = *(stack_top - 1), val = *stack_top;
-            if ((size_t)addr > SIZE_MAX) {
-                Err_setError(ERR_RUNTIME, p - arr, "Heap address too large");
-                goto end_program;
-            }
-            heap_store(addr, val);
+            WS_heap_store(addr, val);
             break;
         }
         case WS_LOAD: {
             ws_int addr = *stack_top;
-            if ((size_t)addr > SIZE_MAX) {
-                Err_setError(ERR_RUNTIME, p - arr, "Heap address too large");
-                goto end_program;
-            }
-            ws_int val = heap_load(addr);
+            ws_int val = WS_heap_load(addr);
             if ((size_t)(stack_top - stack) >= stack_size) {
                 stack_size = stack_size * 2;
                 stack = realloc(stack, stack_size);
@@ -354,7 +285,7 @@ int WS_execute(struct WS_statement* arr, size_t size) {
             }
             int c;
             if ((c = getchar()) != EOF || feof(stdin)) { // EOF is okay
-                heap_store(*stack_top, c);
+                WS_heap_store(*stack_top, c);
             } else if (ferror(stdin)) {
                 Err_setErrorFromFormat(ERR_RUNTIME, p - arr, "Errno %d: %s", errno, strerror(errno));
                 goto end_program;
@@ -368,7 +299,7 @@ int WS_execute(struct WS_statement* arr, size_t size) {
             }
             ws_int n;
             if (scanf("%jd\n", &n)) {
-                heap_store(*stack_top, n);
+                WS_heap_store(*stack_top, n);
             } else {
                 /* It's kinda hard to tell which one... */
                 Err_setErrorFromFormat(ERR_RUNTIME, p - arr, "Invalid number / IO error: %s", strerror(errno));
