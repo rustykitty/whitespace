@@ -5,11 +5,11 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
 
-#include "../common/whitespace.h"
-#include "../common/runtime/runtime.h"
-#include "../common/utility.h"
-#include "../common/error.h"
-#include "../common/parse/parse.h"
+#include <common/whitespace.h>
+#include <common/runtime.h>
+#include <common/utility.h>
+#include <common/error.h>
+#include <common/parse.h>
 
 static struct WS_statement* parse_tuple(PyObject* arg) {
     PyObject* prog;

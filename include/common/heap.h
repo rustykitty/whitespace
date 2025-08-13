@@ -5,7 +5,7 @@
 extern "C" {
 #endif
 
-#include <whitespace.h>
+#include <common/whitespace.h>
 
 #include <stdbool.h>
 #include <sys/types.h>

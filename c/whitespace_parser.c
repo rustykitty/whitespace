@@ -2,16 +2,16 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../common/whitespace.h"
-#include "../common/parse/parse.h"
-#include "../common/runtime/runtime.h"
-#include "../common/error.h"
+#include <common/whitespace.h>
+#include <common/parse.h>
+#include <common/runtime.h>
+#include <common/error.h>
 
 #include <sys/stat.h>
 
 static inline ssize_t get_file_size(FILE* file) {
-    struct stat64 st;
-    if (fstat64(fileno(file), &st) == -1) {
+    struct stat st;
+    if (fstat(fileno(file), &st) == -1) {
         perror("fstat");
         return -1;
     }
