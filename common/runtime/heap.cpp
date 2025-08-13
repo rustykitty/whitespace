@@ -1,5 +1,7 @@
+extern "C" {
 #include <common/whitespace.h>
 #include <common/heap.h>
+}
 
 #include <unordered_map>
 
