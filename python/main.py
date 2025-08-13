@@ -2,7 +2,14 @@ import sys
 
 from utility import write_error, PROGRAM_NAME
 
+# pre-import for performance
+
 import lark
+
+import whitespace as ws
+import whitespace_assembler as wsasmc
+import whitespace_assemble_and_run as wsasmexec
+import whitespace_disassemble as wsdasm
 
 HELP_TEXT = f"""
 Usage: {PROGRAM_NAME} <command> [file...]
@@ -27,16 +34,12 @@ def main():
         print(HELP_TEXT)
         sys.exit(0)
     if mode in ("ws", "whitespace"):
-        import whitespace as ws
         run = ws.run
     elif mode == "wsasmc":
-        import whitespace_assembler as wsasmc
         run = wsasmc.run
     elif mode == "wsasmexec":
-        import whitespace_assemble_and_run as wsasmexec
         run = wsasmexec.run
     elif mode == "wsdasm":
-        import whitespace_disassemble as wsdasm
         run = wsdasm.run
 
     for file in sys.argv[2:]:
