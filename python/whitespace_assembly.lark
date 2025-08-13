@@ -11,7 +11,7 @@ NEWLINE: "\n" | "\r\n"
 program: (NEWLINE* statement)* NEWLINE*
 
 NUMBER_LITERAL: SIGNED_INT
-LABEL_LITERAL: CNAME
+label: CNAME ":"
 
 COMMENT: /;[^\n]*(\r\n)?/ // adapted from common.SH_COMMENT
 
@@ -40,10 +40,9 @@ instruction: "push" -> push
            | "inchr" -> inchr
            | "innum" -> innum
 
-statement: instruction literal?
+statement: instruction | label
 
 ?literal: NUMBER_LITERAL -> number_literal
-        | LABEL_LITERAL -> label_literal
         | CHARACTER_LITERAL -> char_literal
 
 %ignore COMMENT
