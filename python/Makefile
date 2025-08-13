@@ -4,8 +4,8 @@ PYTHON ?= uv run python
 
 LDFLAGS += ../common/parse/parse.a ../common/runtime/runtime.a
 
-build: setup.py whitespace_module.c common install_dependencies
-	rm -rf build/
+build: clean setup.py whitespace_module.c common install_dependencies
+	export C=$(CXX)
 	$(PYTHON) setup.py build_ext -i
 
 common:
