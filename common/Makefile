@@ -1,16 +1,15 @@
-all: runtime/runtime.o error.o whitespace.o runtime/heap.o parse/parse.o
+SUBDIRS = error parse runtime
 
-parse/parse.o: parse/parse.c parse/parse.h whitespace.h
-	$(CC) $(CFLAGS) -fPIC -c parse/parse.c -o parse/parse.o
+MAKEFILE_DIR = $(realpath $(dir $(abspath $(lastword $(MAKEFILE_LIST)))))
 
-runtime/runtime.o: runtime/runtime.c runtime/runtime.h whitespace.h runtime/heap.h
-	$(CC) $(CFLAGS) -fPIC -c runtime/runtime.c -o runtime/runtime.o
+export CFLAGS += -I$(MAKEFILE_DIR)/include
+export CXXFLAGS += -I$(MAKEFILE_DIR)/include
 
-runtime/heap.o: runtime/heap.cpp runtime/heap.h
-	$(CXX) $(CXXFLAGS) -fPIC -c runtime/heap.cpp -o runtime/heap.o
+build: $(SUBDIRS)
 
-error.o: error.c error.h
-	$(CC) $(CFLAGS) -fPIC -c error.c -o error.o
+.PHONY: $(SUBDIRS)
+$(SUBDIRS):
+	$(MAKE) -C $@
 
 clean:
-	rm -rf *.o *.gch *.dSYM
+	rm -rf */*.{a,o}

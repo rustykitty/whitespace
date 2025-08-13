@@ -12,7 +12,8 @@
         "errno.h": "c",
         "error.h": "c",
         "parse_whitespace.h": "c",
-        "parse.h": "c"
+        "parse.h": "c",
+        "unordered_map": "cpp"
     },
     "makefile.configureOnOpen": true
 }

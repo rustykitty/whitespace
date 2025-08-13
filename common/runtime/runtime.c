@@ -5,11 +5,11 @@
 #include <errno.h>
 #include <math.h>
 
-#include "../whitespace.h"
-#include "../utility.h"
-#include "runtime.h"
-#include "../error.h"
-#include "heap.h"
+#include <whitespace.h>
+#include <utility.h>
+#include <runtime.h>
+#include <error.h>
+#include <heap.h>
 
 #ifndef INITIAL_STACK_SIZE
 #define INITIAL_STACK_SIZE 512
@@ -50,7 +50,7 @@ int WS_execute(struct WS_statement* arr, size_t size) {
     struct WS_statement **callstack_top = callstack;
     *callstack_top = arr; // first statement onto top of stack
     
-    ws_int* stack = malloc(INITIAL_STACK_SIZE * sizeof(ws_int)),
+    ws_int* stack = (ws_int*) malloc(INITIAL_STACK_SIZE * sizeof(ws_int)),
         *stack_top = stack;
     size_t stack_size = INITIAL_STACK_SIZE;
 
@@ -62,7 +62,7 @@ int WS_execute(struct WS_statement* arr, size_t size) {
         }
     }
     if (label_count > 0) {
-        labels = malloc(sizeof(struct WS_statement*) * (label_count + 1));
+        labels = (struct WS_statement**) malloc(sizeof(struct WS_statement*) * (label_count + 1));
         labels[label_count] = NULL; // sentinel, should we need it
         size_t x = 0;
         for (size_t i = 0; i < size; ++i) {
@@ -94,7 +94,7 @@ int WS_execute(struct WS_statement* arr, size_t size) {
         case WS_PUSH: {
             if ((size_t)(stack_top - stack) >= stack_size) {
                 stack_size = stack_size * 2;
-                stack = realloc(stack, stack_size);
+                stack = (ws_int*) realloc(stack, stack_size);
             }
             ++stack_top;
             *stack_top = i.num;
@@ -103,10 +103,10 @@ int WS_execute(struct WS_statement* arr, size_t size) {
         case WS_DUP: {
             if ((size_t)(stack_top - stack) >= stack_size) {
                 stack_size = stack_size * 2;
-                stack = realloc(stack, stack_size);
+                stack = (ws_int*) realloc(stack, stack_size);
             }
             stack_size = stack_size * 2;
-            stack = realloc(stack, stack_size);
+            stack = (ws_int*) realloc(stack, stack_size);
             break;
         }
         case WS_SWAP: {
@@ -134,7 +134,7 @@ int WS_execute(struct WS_statement* arr, size_t size) {
             } else {
                 if ((size_t)(stack_top - stack) >= stack_size) {
                     stack_size = stack_size * 2;
-                    stack = realloc(stack, stack_size);
+                    stack = (ws_int*) realloc(stack, stack_size);
                 }
                 ++stack_top;
                 *stack_top = *(stack_top - i.num);
@@ -217,7 +217,7 @@ int WS_execute(struct WS_statement* arr, size_t size) {
             ws_int val = WS_heap_load(addr);
             if ((size_t)(stack_top - stack) >= stack_size) {
                 stack_size = stack_size * 2;
-                stack = realloc(stack, stack_size);
+                stack = (ws_int*) realloc(stack, stack_size);
             }
             ++stack_top;
             *stack_top = val;
