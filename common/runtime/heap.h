@@ -10,8 +10,10 @@ extern "C" {
 #include <stdbool.h>
 #include <sys/types.h>
 
+void WS_heap_init();
 ws_int WS_heap_load(ws_int);
 void WS_heap_store(ws_int, ws_int);
+void WS_heap_free();
 
 #ifdef __cplusplus
 }
