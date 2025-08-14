@@ -17,5 +17,7 @@ jobs:
       with:
         python-version: 3.12
         architecture: x64
+    - name: Make Python extension
+      run: make -C python
     - name: Run tests
       run: make -C python test
