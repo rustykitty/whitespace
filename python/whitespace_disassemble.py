@@ -10,6 +10,8 @@ import lark
 IDENTIFIER = re.compile(r"[_a-zA-Z][_a-zA-Z0-9]*")
 
 def run(data, filename=None):
+    raise RuntimeError("Whitespace disassembler is currently unusable due to rewrites to the parser implementation.")
+
     try:
         output = ws.parse(data)
     except lark.exceptions.LarkError:

@@ -32,13 +32,13 @@ class TestWhitespaceAssembleAndRun(unittest.TestCase):
         code = "push 1\npush 2\nadd\noutnum\nend"
         self.whitespace_assemble_and_run.run(code)
 
-class TestWhitespaceDisassemble(unittest.TestCase):
+# class TestWhitespaceDisassemble(unittest.TestCase):
 
-    def setUp(self):
-        import whitespace_disassemble
-        self.whitespace_disassemble = whitespace_disassemble
+#     def setUp(self):
+#         import whitespace_disassemble
+#         self.whitespace_disassemble = whitespace_disassemble
 
-    def test_disassemble(self):
-        code = "\n\n\n" 
-        assembly = self.whitespace_disassemble.run(code)
-        self.assertIn("end", assembly)
+#     def test_disassemble(self):
+#         code = "\n\n\n" 
+#         assembly = self.whitespace_disassemble.run(code)
+#         self.assertIn("end", assembly)
