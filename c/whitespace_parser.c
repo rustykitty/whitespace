@@ -40,7 +40,7 @@ int main (int argc, char* argv[]) {
             fclose(file);
             return 1;
         }
-        char* buf = calloc(fileSize + 1, sizeof(char));
+        char* buf = (char*) calloc(fileSize + 1, sizeof(char));
         fread(buf, 1, fileSize, file);
         fclose(file);
 
