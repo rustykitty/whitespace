@@ -71,9 +71,12 @@ def run(data, filename=None):
             for stmt in transformed_output
         )
         ws_code = to_whitespace(transformed_output)
+        if filename is None:
+            return ws_code
         with open(filename + ".ws", "w") as out:
             out.write(ws_code)
     except lark.exceptions.LarkError as e:
         raise
     except OSError:
         utility.write_error(filename + ".ws", e)
+        raise

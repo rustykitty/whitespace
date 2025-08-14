@@ -12,7 +12,7 @@ IDENTIFIER = re.compile(r"[_a-zA-Z][_a-zA-Z0-9]*")
 def run(data, filename=None):
     try:
         output = ws.parse(data)
-    except lark.exceptions.LarkError as e:
+    except lark.exceptions.LarkError:
         raise
     res = ''
     for stmt in output:
@@ -20,5 +20,7 @@ def run(data, filename=None):
         if len(stmt) == 2:
             res += (" " + repr(stmt[1]))
         res += "\n"
+    if filename is None:
+        return res
     with open(filename + ".wsasm", "w") as fp:
         fp.write(res)

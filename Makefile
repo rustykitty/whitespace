@@ -1,13 +1,6 @@
 SUBDIRS = c common python
 
-MAKEFILE_DIR = $(realpath $(dir $(abspath $(lastword $(MAKEFILE_LIST)))))
-
-export PROJECT_ROOT = $MAKEFILE_DIR
-
-export CFLAGS += -I$(MAKEFILE_DIR)/include
-export CXXFLAGS += -I$(MAKEFILE_DIR)/include
-
-export LDLIBS += -lstdc++
+include Makefile.common
 
 build: $(SUBDIRS)
 

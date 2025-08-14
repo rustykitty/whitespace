@@ -1,10 +1,13 @@
 PYTHON ?= uv run python
 
-.PHONY: build clean common install_dependencies
+include ../Makefile.common
+
+.PHONY: build clean common install_dependencies test
 
 LDFLAGS += ../common/parse/parse.a ../common/runtime/runtime.a
 
-build: clean setup.py whitespace_module.c common install_dependencies
+build: setup.py whitespace_module.c common install_dependencies
+	$(MAKE) clean
 	$(PYTHON) setup.py build_ext -i
 
 common:
@@ -16,3 +19,6 @@ install_dependencies:
 clean:
 	rm -rf build/
 	rm -rf *.so
+
+test:
+	$(PYTHON) -m unittest discover -s tests

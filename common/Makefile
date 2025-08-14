@@ -1,5 +1,7 @@
 SUBDIRS = error parse runtime
 
+include ../Makefile.common
+
 build: $(SUBDIRS)
 
 .PHONY: $(SUBDIRS)
