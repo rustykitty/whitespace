@@ -8,7 +8,9 @@ on:
 
 jobs:
   build:
-
+    strategy:
+      matrix:
+        target: [ c, common, python ]
     runs-on: ubuntu-latest
 
     steps:
@@ -24,4 +26,4 @@ jobs:
         python-version: 3.12
         architecture: x64
     - name: Run make
-      run: make
+      run: make ${{ matrix.target }}
