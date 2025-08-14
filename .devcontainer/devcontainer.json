@@ -4,9 +4,9 @@
         "ghcr.io/devcontainers/features/python:1": {
             "version": "3.12"
         },
-        "ghcr.io/devcontainers-extra/features/poetry:2": {}
+        "ghcr.io/va-h/devcontainers-features/uv:1": {}
     },
-    "postCreateCommand": "poetry install --no-root",
+    "postCreateCommand": "uv sync",
     "customizations": {
         "vscode": {
             "extensions": [
