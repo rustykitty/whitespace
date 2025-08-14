@@ -1,6 +1,6 @@
 whitespace_parser:
 	$(MAKE) -C ../common parse runtime
-	$(CXX) $(CFLAGS) -o whitespace_parser whitespace_parser.c ../common/parse/parse.a ../common/runtime/runtime.a
+	$(CC) $(CFLAGS) $(LDFLAGS) -o whitespace_parser whitespace_parser.c ../common/parse/parse.a ../common/runtime/runtime.a
 
 .PHONY: clean
 clean:
