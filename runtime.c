@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <sys/types.h>
+#include <stdint.h>
 #include <errno.h>
 #include <math.h>
 
@@ -194,8 +194,12 @@ int WS_execute(struct WS_statement* arr, size_t size) {
         }
         case WS_SLIDE: {
             if (stack_top >= stack) {
-                ws_int top_value = *stack_top; 
-                ws_int* new_top = MAX(stack_top - i.num, stack);
+                ws_int top_value = *stack_top;
+                ws_int* new_top = stack;
+                stack_top -= i.num;
+                if (stack_top > stack) {
+                    new_top = stack_top;
+                }
                 *(stack_top = new_top) = top_value;
             } else {
                 Err_setError(ERR_RUNTIME, p - arr, "Not enough items on stack for slide");

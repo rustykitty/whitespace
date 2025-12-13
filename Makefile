@@ -6,16 +6,16 @@ CFLAGS += -Wall -Wextra -std=gnu99
 
 build: runtime.o parse.o ws_error.o whitespace_parser
 
-whitespace_parser: whitespace_parser.c parse.o runtime.o ws_error.o
+whitespace_parser: whitespace_parser.c parse.o runtime.o ws_error.o whitespace.h
 	$(CC) $(CFLAGS) -o whitespace_parser whitespace_parser.c ./parse.o ./runtime.o ws_error.o $(LDLIBS)
 
-parse.o: parse.c parse.h ws_error.o
+parse.o: parse.c parse.h ws_error.o whitespace.h
 	$(CC) $(CFLAGS) -c -o parse.o parse.c
 
 ws_error.o: ws_error.c ws_error.h
 	$(CC) $(CFLAGS) -c -o ws_error.o ws_error.c
 
-runtime.o: runtime.h runtime.c
+runtime.o: runtime.h runtime.c whitespace.h
 	$(CC) $(CFLAGS) -c -o runtime.o runtime.c
 
 .PHONY: clean

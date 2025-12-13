@@ -1,12 +1,7 @@
 #ifndef WHITESPACE_H
 #define WHITESPACE_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include <stdint.h>
-#include <sys/types.h>
 
 typedef intmax_t ws_int;
 
@@ -57,9 +52,5 @@ struct WS_statement {
         struct WS_statement* label_ptr;
     };
 };
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif // WHITESPACE_H
