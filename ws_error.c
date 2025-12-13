@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <common/error.h>
+#include "ws_error.h"
 
 const char* Err_Type_to_string[] = {
     [ERR_NONE] = "ERR_NONE",

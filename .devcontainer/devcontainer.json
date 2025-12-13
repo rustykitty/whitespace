@@ -6,17 +6,12 @@
         },
         "ghcr.io/va-h/devcontainers-features/uv:1": {}
     },
-    "postCreateCommand": "uv sync",
     "customizations": {
         "vscode": {
             "extensions": [
                 "GitHub.copilot",
                 "ms-vscode.cpptools-extension-pack",
                 "ms-vscode.makefile-tools",
-                "ms-python.python",
-                "ms-python.debugpy",
-                "ms-python.vscode-pylance",
-                "ms-python.autopep8",
                 "DavidAnson.vscode-markdownlint"
             ],
             "settings": {
