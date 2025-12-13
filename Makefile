@@ -20,7 +20,7 @@ runtime.o: runtime.h runtime.c
 
 .PHONY: clean
 clean:
-	rm -f whitespace_parser */*.{a,o}
+	rm -f whitespace_parser $(wildcard *.o)
 
 SUBDIRS = runtime
 
