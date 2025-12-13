@@ -1,3 +1,0 @@
-- Support for labels in the form `label_identifier:<newline>`
-- Appears to be some bugs with the whitespace assembler's handling of literals (check if this is still the case)
-- Unit tests

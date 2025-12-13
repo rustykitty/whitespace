@@ -1,7 +1,7 @@
-#include <common/error.h>
-#include <common/whitespace.h>
-#include <common/utility.h>
-#include <common/parse.h>
+#include "ws_error.h"
+#include "whitespace.h"
+#include "utility.h"
+#include "parse.h"
 
 #include <stdlib.h>
 #include <string.h>

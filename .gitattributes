@@ -4,5 +4,3 @@
 
 # vendored is to exclude from stats, because it's not Witcher Script (whatever that is)
 **/*.ws binary linguist-vendored	
-
-poetry.lock linguist-generated

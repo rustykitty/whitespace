@@ -1,15 +1,66 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <sys/types.h>
+#include <stdint.h>
 #include <errno.h>
 #include <math.h>
 
-#include <common/whitespace.h>
-#include <common/utility.h>
-#include <common/runtime.h>
-#include <common/error.h>
-#include <common/heap.h>
+#include "whitespace.h"
+#include "utility.h"
+#include "runtime.h"
+#include "ws_error.h"
+
+/* HEAP CODE */
+
+#include "lib/uthash.h"
+
+struct WS_HeapEntry {
+    ws_int address;
+    ws_int value;
+    UT_hash_handle hh;
+};
+
+static struct WS_HeapEntry* heap_table = NULL;
+
+#define INT_SIZE sizeof(ws_int)
+
+// Currently does nothing, because uthash takes care of it for us
+static void WS_heap_init() { }
+
+static ws_int WS_heap_load(ws_int address) { 
+    struct WS_HeapEntry* entry;
+    HASH_FIND(hh, heap_table, &address, INT_SIZE, entry);
+    if (entry == NULL) {
+        return 0;
+    } else {
+        return entry->value;
+    }
+}
+
+static void WS_heap_store(ws_int address, ws_int value) {
+    struct WS_HeapEntry* entry = (struct WS_HeapEntry*) malloc(sizeof(struct WS_HeapEntry));
+    *entry = (struct WS_HeapEntry) {
+        .address = address,
+        .value = value
+    };
+    struct WS_HeapEntry* replaced;
+
+    HASH_REPLACE(hh, heap_table, address, INT_SIZE, entry, replaced);
+
+    if (replaced) {
+        free(replaced);
+    }
+}
+
+static void WS_heap_free() {
+    struct WS_HeapEntry *p, *tmp;
+    HASH_ITER(hh, heap_table, p, tmp) {
+        HASH_DEL(heap_table, p);
+        free(p);
+    }
+}
+
+/* END HEAP CODE */
 
 #ifndef INITIAL_STACK_SIZE
 #define INITIAL_STACK_SIZE 512
@@ -45,7 +96,7 @@ static inline struct WS_statement* get_label(struct WS_statement** labels, size_
  * @returns nonzero on success, zero on failure
  */
 int WS_execute(struct WS_statement* arr, size_t size) {
-    static struct Err_Error* e = NULL;
+    WS_heap_init();
     static struct WS_statement *callstack[CALLSTACK_SIZE];
     struct WS_statement **callstack_top = callstack;
     *callstack_top = arr; // first statement onto top of stack
@@ -143,8 +194,12 @@ int WS_execute(struct WS_statement* arr, size_t size) {
         }
         case WS_SLIDE: {
             if (stack_top >= stack) {
-                ws_int top_value = *stack_top; 
-                ws_int* new_top = MAX(stack_top - i.num, stack);
+                ws_int top_value = *stack_top;
+                ws_int* new_top = stack;
+                stack_top -= i.num;
+                if (stack_top > stack) {
+                    new_top = stack_top;
+                }
                 *(stack_top = new_top) = top_value;
             } else {
                 Err_setError(ERR_RUNTIME, p - arr, "Not enough items on stack for slide");
@@ -316,6 +371,7 @@ int WS_execute(struct WS_statement* arr, size_t size) {
         fprintf(stderr, "Warning: reached end of program but didn't find END instruction\n");
     }
     end_program:
+    WS_heap_free();
     free(stack);
     if (labels) free(labels);
     return !Err_isSet();

@@ -107,4 +107,4 @@ dkms.conf
 **/*.ws.wsasm
 **/*.wsasm.ws
 
-out/
+whitespace_parser
