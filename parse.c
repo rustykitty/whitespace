@@ -104,8 +104,9 @@ static char* minify(const char* restrict str) {
 struct WS_statement* WS_parse(const char* str, size_t* size_p) {
     // overalloc on purpose, so we don't need to realloc many times (no dynamic array!)
     const char* minified = minify(str);
+    size_t bufsize = strlen(str);
     // shortest instruction is 3 bytes long
-    struct WS_statement* restrict arr = calloc((strlen(str) / 3) + 2, sizeof(struct WS_statement));
+    struct WS_statement* arr = calloc((bufsize / 3) + 2, sizeof(struct WS_statement));
 
     const char* const beg = minified;
 

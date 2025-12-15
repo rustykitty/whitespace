@@ -68,6 +68,7 @@ int main (int argc, char* argv[]) {
             perror("mmap");
             return 1;
         }
+        buf = tempbuf;
     }
     
     size_t size;
@@ -91,7 +92,6 @@ int main (int argc, char* argv[]) {
 
 error:
     Err_perror();
-    free(buf);
 
     if (is_stdin) {
         free(buf);
