@@ -2,6 +2,16 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifdef _WIN32
+#warning "Windows not officially supported"
+#endif
+
+#if defined(__unix__) || defined(__APPLE__) || defined(__linux__)
+#include <sys/mman.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#endif
+
 #include "whitespace.h"
 #include "parse.h"
 #include "runtime.h"
@@ -20,44 +30,46 @@ int main (int argc, char* argv[]) {
         }
         filename = argv[1];
     }
-    FILE* file = NULL;
+
+    int is_stdin = 0;
+
+    char* buf = NULL;
+    size_t bufsize;
+
     if (strcmp(filename, "-") == 0) {
-        file = stdin;
+        is_stdin = 1;
+
+        // Read all of stdin into memory
+
+        FILE* temp = open_memstream(&buf, &bufsize);
+
+        int c;
+        while ((c = getchar()) != EOF) {
+            fputc(c, temp);
+        }
+        if (ferror(stdin)) {
+            perror("");
+            return 1;
+        }
+        fclose(temp);
     } else {
-        file = fopen(filename, "r");
-        if (file == NULL) {
+        // Map the filename into memory
+
+        int fd = open(filename, O_RDONLY);
+        if (fd < 0) {
             perror(filename);
             return 1;
         }
-    }
-    char* buf;
-    {
-        size_t bufcap = INITIAL_BUFFER_SIZE;
-        size_t bufsize = 0;
-        buf = (char*) calloc(bufcap + 1, sizeof(char));
-        if (!buf) {
-            perror("calloc");
+        struct stat filestat;
+        fstat(fd, &filestat);
+        bufsize = filestat.st_size;
+        char* tempbuf = mmap(NULL, bufsize, PROT_READ, MAP_PRIVATE, fd, 0);
+        if (!tempbuf) {
+            perror("mmap");
             return 1;
         }
-        int c;
-        while ((c = fgetc(file)) != EOF) {
-            buf[bufsize] = c;
-            ++bufsize;
-            if (bufsize == bufcap) {
-                char* tmp = realloc(buf, bufcap * 2 + 1);
-                if (!tmp) {
-                    perror("realloc");
-                    return 1;
-                }
-                bufcap *= 2;
-                buf = tmp;
-            }
-        }
     }
-
-    if (file != stdin)
-        fclose(file);
-
+    
     size_t size;
     struct WS_statement* program = WS_parse(buf, &size);
 
@@ -69,9 +81,23 @@ int main (int argc, char* argv[]) {
         goto error;
     }
 
-    error:
+    if (is_stdin) {
+        free(buf);
+    } else {
+        munmap(buf, bufsize);
+    }
+
+    return 0;
+
+error:
     Err_perror();
     free(buf);
+
+    if (is_stdin) {
+        free(buf);
+    } else {
+        munmap(buf, bufsize);
+    }
+
     return 1;
-    return 0;
 }
