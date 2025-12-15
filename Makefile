@@ -4,10 +4,10 @@ PROJECT_ROOT = $(MAKEFILE_DIR)
 
 CFLAGS += -Wall -Wextra -std=gnu99
 
-build: runtime.o parse.o ws_error.o whitespace_parser
+build: runtime.o parse.o ws_error.o whitespace
 
-whitespace_parser: whitespace_parser.c parse.o runtime.o ws_error.o whitespace.h
-	$(CC) $(CFLAGS) -o whitespace_parser whitespace_parser.c ./parse.o ./runtime.o ws_error.o $(LDLIBS)
+whitespace: main.c parse.o runtime.o ws_error.o whitespace.h
+	$(CC) $(CFLAGS) -o whitespace main.c ./parse.o ./runtime.o ws_error.o $(LDLIBS)
 
 parse.o: parse.c parse.h ws_error.o whitespace.h
 	$(CC) $(CFLAGS) -c -o parse.o parse.c
@@ -20,7 +20,7 @@ runtime.o: runtime.h runtime.c whitespace.h
 
 .PHONY: clean
 clean:
-	rm -f whitespace_parser $(wildcard *.o)
+	rm -f whitespace $(wildcard *.o)
 
 SUBDIRS = runtime
 
