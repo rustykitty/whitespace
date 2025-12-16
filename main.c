@@ -6,11 +6,10 @@
 #warning "Windows not officially supported"
 #endif
 
-#if defined(__unix__) || defined(__APPLE__) || defined(__linux__)
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#endif
+#include <unistd.h>
 
 #include "whitespace.h"
 #include "parse.h"
@@ -31,27 +30,41 @@ int main (int argc, char* argv[]) {
         filename = argv[1];
     }
 
-    int is_stdin = 0;
-
     char* buf = NULL;
     size_t bufsize;
 
     if (strcmp(filename, "-") == 0) {
-        is_stdin = 1;
 
-        // Read all of stdin into memory
+        // Create a temporary file
+        FILE* tempfile = tmpfile();
 
-        FILE* temp = open_memstream(&buf, &bufsize);
+        if (!tempfile) {
+            perror("");
+            return 1;
+        }
 
         int c;
         while ((c = getchar()) != EOF) {
-            fputc(c, temp);
+            char chr = c;
+            fwrite(&chr, 1, 1, tempfile);
+            if (ferror(tempfile)) {
+                perror("");
+                return 1;
+            }
         }
         if (ferror(stdin)) {
             perror("");
             return 1;
         }
-        fclose(temp);
+        bufsize = ftell(tempfile);
+        int tempfd = fileno(tempfile);
+        char* tempbuf = mmap(NULL, bufsize, PROT_READ, MAP_PRIVATE, tempfd, 0);
+        if (!tempbuf) {
+            perror("mmap");
+            return 1;
+        }
+        buf = tempbuf;
+        fclose(tempfile);
     } else {
         // Map the filename into memory
 
@@ -69,6 +82,7 @@ int main (int argc, char* argv[]) {
             return 1;
         }
         buf = tempbuf;
+        close(fd);
     }
     
     size_t size;
@@ -82,22 +96,15 @@ int main (int argc, char* argv[]) {
         goto error;
     }
 
-    if (is_stdin) {
-        free(buf);
-    } else {
-        munmap(buf, bufsize);
-    }
+
+    munmap(buf, bufsize);
 
     return 0;
 
 error:
     Err_perror();
 
-    if (is_stdin) {
-        free(buf);
-    } else {
-        munmap(buf, bufsize);
-    }
+    munmap(buf, bufsize);
 
     return 1;
 }
