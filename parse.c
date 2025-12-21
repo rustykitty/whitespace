@@ -49,12 +49,16 @@ static ssize_t find_instruction(const char** str_p) {
     return -1;
 }
 
-static ws_int parse_number(const char** str_p) {
+static int parse_number(const char** str_p, ws_int* res) {
     const char* restrict str = *str_p;
-    ws_int num = 0;
-    if (*str == '\n') {
-        Err_setError(ERR_PARSE, 0, "Unexpected end of number literal");
+    int num = 0;
+    const char* memchr_result = (char*)memchr(str, '\n', strlen(str));
+    if (!memchr_result) {
+        Err_setError(ERR_PARSE, 0, "Unexpected end of input while parsing number literal");
         return 0;
+    }
+    if (*str == '\n') {
+        Err_setError(ERR_PARSE, 0, "Unexpected character in number literal");
     }
     bool negative = *str == '\t';
     ++str;
@@ -63,15 +67,19 @@ static ws_int parse_number(const char** str_p) {
         ++str;
     }
     *str_p = str + 1;
-    return negative ? -num : num;
+    *res = negative ? -num : num;
+    return 1;
 }
 
 static label_type parse_label(const char** str_p) {
     const char* restrict str = *str_p;
     const char* memchr_result = (char*)memchr(str, '\n', strlen(str));
     if (!memchr_result) {
-        Err_setError(ERR_PARSE, 0, "Unexpected end of input");
-        return NULL;
+        Err_setError(ERR_PARSE, 0, "Unexpected end of input while parsing label literal");
+        return 0;
+    }
+    if (*str == '\n') {
+        Err_setError(ERR_PARSE, 0, "Unexpected character in label literal");
     }
     *str_p = memchr_result + 1;
     size_t length = memchr_result - str;
@@ -128,9 +136,10 @@ struct WS_statement* WS_parse(const char* str, size_t* size_p) {
         case WS_COPY:
         case WS_SLIDE:
             {
-                const ws_int n = parse_number(&p);
+                ws_int n;
+                int retval = parse_number(&p, &n);
                 DEBUG("[DEBUG] Parsed number %zd\n", n);
-                if (Err_isSet()) {
+                if (!retval) {
                     Err_getError()->index = p - beg;
                     goto error;
                 }
