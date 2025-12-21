@@ -1,9 +1,0 @@
-label top
-push 0
-inchr
-load 0
-jlz eof ; assuming EOF == -1
-outchr
-jmp top
-label eof
-end
