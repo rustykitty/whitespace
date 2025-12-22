@@ -40,22 +40,22 @@ Err_Error* Err_setErrorFromFormat(enum Err_Type type, size_t i, const char* form
     return &err_s;
 }
 
-Err_Error* Err_getError() {
+Err_Error* Err_getError(void) {
     return &err_s;
 }
 
-int Err_isSet() {
+int Err_isSet(void) {
     return err_s.message != NULL;
 }
 
-void Err_clearError() {
+void Err_clearError(void) {
     err_s = (Err_Error){
         .index = 0,
         .message = NULL
     };
 }
 
-int Err_perror() {
+int Err_perror(void) {
     return Err_fperror(stderr);
 }
 

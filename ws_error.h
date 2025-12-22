@@ -23,8 +23,8 @@ typedef struct Err_Error Err_Error;
 
 Err_Error* Err_setError(enum Err_Type type, size_t i, const char* m);
 Err_Error* Err_setErrorFromFormat(enum Err_Type type, size_t i, const char* format, ...);
-Err_Error* Err_getError();
-int Err_isSet();
-void Err_clearError();
-int Err_perror();
+Err_Error* Err_getError(void);
+int Err_isSet(void);
+void Err_clearError(void);
+int Err_perror(void);
 int Err_fperror(FILE* stream);

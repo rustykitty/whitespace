@@ -25,7 +25,7 @@ static struct WS_HeapEntry* heap_table = NULL;
 #define INT_SIZE sizeof(ws_int)
 
 // Currently does nothing, because uthash takes care of it for us
-static void WS_heap_init() { }
+static void WS_heap_init(void) { }
 
 static ws_int WS_heap_load(ws_int address) { 
     struct WS_HeapEntry* entry;
@@ -52,7 +52,7 @@ static void WS_heap_store(ws_int address, ws_int value) {
     }
 }
 
-static void WS_heap_free() {
+static void WS_heap_free(void) {
     struct WS_HeapEntry *p, *tmp;
     HASH_ITER(hh, heap_table, p, tmp) {
         HASH_DEL(heap_table, p);
