@@ -55,7 +55,7 @@ void Err_clearError() {
     };
 }
 
-int Err_perror()  {
+int Err_perror() {
     return Err_fperror(stderr);
 }
 

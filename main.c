@@ -16,8 +16,6 @@
 #include "runtime.h"
 #include "ws_error.h"
 
-#define INITIAL_BUFFER_SIZE 64
-
 int main (int argc, char* argv[]) {
     char* filename;
     if (argc == 1) {
