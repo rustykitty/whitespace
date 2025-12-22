@@ -143,7 +143,7 @@ struct WS_statement* WS_parse(const char* str, size_t* size_p) {
                     Err_getError()->index = p - beg;
                     goto error;
                 }
-                statement.num = n;
+                statement.arg.num = n;
                 break;
             }
         case WS_LABEL:
@@ -158,7 +158,7 @@ struct WS_statement* WS_parse(const char* str, size_t* size_p) {
                     goto error;
                 }
                 DEBUG("[DEBUG] Parsed label %s\n", label);
-                statement.label = label;
+                statement.arg.label = label;
                 break;
             }
         default: 

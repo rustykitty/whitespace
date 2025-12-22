@@ -36,7 +36,7 @@ enum WS_operation {
 typedef const char* label_type;
 
 /**
- * Information on the union:
+ * Information on the union `arg`:
  * - `num` is undefined when `op` is not a valid operation that takes an 
  *   integral argument.
  * - `label` is defined when `op` is a valid operation which takes a label
@@ -50,7 +50,7 @@ struct WS_statement {
         ws_int num;
         label_type label;
         struct WS_statement* label_ptr;
-    };
+    } arg;
 };
 
 #endif // WHITESPACE_H

@@ -83,7 +83,7 @@ static inline struct WS_statement* get_label(struct WS_statement** labels, size_
         return NULL;
     }
     for (size_t i = 0; i < label_count; ++i) {
-        if (labelcmp(labels[i]->label, label)) {
+        if (labelcmp(labels[i]->arg.label, label)) {
             return labels[i];
             break;
         }
@@ -129,12 +129,12 @@ int WS_execute(struct WS_statement* arr, size_t size) {
             arr[i].op == WS_JMP ||
             arr[i].op == WS_JZ ||
             arr[i].op == WS_JLZ) {
-            struct WS_statement* label = get_label(labels, label_count, arr[i].label);
+            struct WS_statement* label = get_label(labels, label_count, arr[i].arg.label);
             if (!label) {
-                Err_setErrorFromFormat(ERR_RUNTIME, i, "Label %s was used but never defined", arr[i].label);
+                Err_setErrorFromFormat(ERR_RUNTIME, i, "Label %s was used but never defined", arr[i].arg.label);
                 goto end_program;
             }
-            arr[i].label_ptr = label;
+            arr[i].arg.label_ptr = label;
         }
     }
 
@@ -148,7 +148,7 @@ int WS_execute(struct WS_statement* arr, size_t size) {
                 stack = (ws_int*) realloc(stack, stack_size);
             }
             ++stack_top;
-            *stack_top = i.num;
+            *stack_top = i.arg.num;
             break;
         }
         case WS_DUP: {
@@ -179,7 +179,7 @@ int WS_execute(struct WS_statement* arr, size_t size) {
             break;
         }
         case WS_COPY: {
-            if (stack_top - stack < i.num) {
+            if (stack_top - stack < i.arg.num) {
                 Err_setError(ERR_RUNTIME, p - arr, "Not enough items on stack for copy");
                 goto end_program;
             } else {
@@ -188,7 +188,7 @@ int WS_execute(struct WS_statement* arr, size_t size) {
                     stack = (ws_int*) realloc(stack, stack_size);
                 }
                 ++stack_top;
-                *stack_top = *(stack_top - i.num);
+                *stack_top = *(stack_top - i.arg.num);
             }
             break;
         }
@@ -196,7 +196,7 @@ int WS_execute(struct WS_statement* arr, size_t size) {
             if (stack_top >= stack) {
                 ws_int top_value = *stack_top;
                 ws_int* new_top = stack;
-                stack_top -= i.num;
+                stack_top -= i.arg.num;
                 if (stack_top > stack) {
                     new_top = stack_top;
                 }
@@ -287,21 +287,21 @@ int WS_execute(struct WS_statement* arr, size_t size) {
                 Err_setError(ERR_RUNTIME, p - arr, "Callstack overflow");
                 goto end_program;
             }
-            *(++callstack_top) = i.label_ptr;
+            *(++callstack_top) = i.arg.label_ptr;
             break;
         }
         case WS_JMP: {
-            *callstack_top = i.label_ptr;
+            *callstack_top = i.arg.label_ptr;
             break;
         }
         case WS_JZ: {
             if (*stack_top == 0)
-                *callstack_top = i.label_ptr;
+                *callstack_top = i.arg.label_ptr;
             break;
         }
         case WS_JLZ: {
             if (*stack_top < 0)
-                *callstack_top = i.label_ptr;
+                *callstack_top = i.arg.label_ptr;
             break;
         }
         case WS_RET: {
