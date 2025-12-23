@@ -1,7 +1,3 @@
-MAKEFILE_DIR = $(realpath $(dir $(abspath $(lastword $(MAKEFILE_LIST)))))
-
-PROJECT_ROOT = $(MAKEFILE_DIR)
-
 CFLAGS += -Wall -Wextra -std=gnu99
 
 build: runtime.o parse.o ws_error.o whitespace
@@ -24,10 +20,3 @@ runtime.o: runtime.h runtime.c whitespace.h
 .PHONY: clean
 clean:
 	rm -f whitespace $(wildcard *.o)
-
-SUBDIRS = runtime
-
-.PHONY: $(SUBDIRS)
-
-$(SUBDIRS):
-	$(MAKE) -C $@
