@@ -6,8 +6,11 @@ CFLAGS += -Wall -Wextra -std=gnu99
 
 build: runtime.o parse.o ws_error.o whitespace
 
-whitespace: main.c parse.o runtime.o ws_error.o whitespace.h
-	$(CC) $(CFLAGS) -o whitespace main.c ./parse.o ./runtime.o ws_error.o $(LDLIBS)
+whitespace: main.o parse.o runtime.o ws_error.o whitespace.h
+	$(CC) $(CFLAGS) -o whitespace main.o parse.o runtime.o ws_error.o
+
+main.o: main.c
+	$(CC) $(CFLAGS) -c -o main.o main.c
 
 parse.o: parse.c parse.h ws_error.o whitespace.h
 	$(CC) $(CFLAGS) -c -o parse.o parse.c
